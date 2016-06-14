@@ -23,4 +23,5 @@ class Action:
         return hash(frozenset(self.id))
 
     def __str__(self):
-        return "Action[id: " + str(self.id) + ", value" + str(self.value) + "]"
+        return "Action[id: " + str(self.id) + ", value: " + \
+                                            str(self.value) + "]"

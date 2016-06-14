@@ -10,15 +10,15 @@ class TDPolicy(Policy):
         observation = self.env.reset()
         step = 0
         while True:
-            last_state = State(observation)
-            #env.render()
+            last_state = State(observation, self.cellSize)
+            #self.env.render()
             step += 1
 
             act = self.getAction(last_state)
             observation, reward, done, info = self.env.step(act.id)
 
             self.history.addStep(last_state, act, reward)
-            self.updateStep(last_state, act, reward, step-1)
+            self.updateStep(last_state, act, reward, step - 1)
 
             if done or step > self.env.spec.timestep_limit:
                 print(('finished episode', episode_n, 'steps', step))

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-import numpy
+from scipy.spatial.distance import euclidean
 
 
 class State:
 
-    def __init__(self, obs):
+    def __init__(self, obs, cellSize):
         self.obs = obs
         self.value = 1
+        self.cellSize = cellSize
 
     def updateValue(self, updater):
         self.value = updater.estimateStateValue()
@@ -17,8 +18,9 @@ class State:
     def __eq__(self, other):
         if not isinstance(other, State):
             return False
-        return numpy.array_equal(self.obs, other.obs)
+        return euclidean(self.obs, other.obs) < self.cellSize
 
+    # spatial hashing
     def __hash__(self):
         return hash(frozenset(set(self.obs)))
 

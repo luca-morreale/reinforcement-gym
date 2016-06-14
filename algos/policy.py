@@ -9,10 +9,10 @@ from numpy.random import random_sample
 
 class Policy:
 
-    def __init__(self, discount_factor, learning_rate, epsilon):
+    def __init__(self, actionChooser, discount_factor, learning_rate):
+        self.actionChooser = actionChooser
         self.gamma = discount_factor
         self.alfa = learning_rate
-        self.epsilon = epsilon
         self.newEpisode()
         self.Q = {}
 
@@ -32,12 +32,23 @@ class Policy:
     def setEpisodeN(self, n):
         self.epsilon = 1 / n
 
-    #
-    def appendActionTo(self, state, action):
-        if state in self.Q:
-            self.Q[state].append(action)
-        else:
-            self.Q[state] = [action]
+    # return the state equivalent to the given one, in case no match
+    # has been found the state will be added
+    def getQState(self, state):
+        for s in self.Q:
+            if s == state:
+                return s
+        self.Q[state] = []
+        return state
+
+    # return the action equivalent to the one given, in case no match has
+    # been found the action will be added
+    def getActionOf(self, state, action):
+        for a in self.Q[state]:
+            if a == action:
+                return a
+        self.Q[state].append(action)
+        return action
 
     # update all values of state-action pair
     def updateEpisode(self):
@@ -48,19 +59,11 @@ class Policy:
         self.newEpisode()
 
     # update the single value of a pair action-value
-    def updateStep(self, state, action, vt, t, alfa=-1):
-        alfa = self.alfa if alfa < 0 else alfa
-        if state in self.Q:
-            for key in self.Q[state]:
-                if action == key:
-                    key.addVisit()
-                    key.value = self.estimateNewValue(key.value, alfa, vt, t)
-                    return
-            self.appendActionTo(state, action)
-        else:
-            action.addVisit()
-            action.value = self.estimateNewValue(action.value, alfa, vt, t)
-            self.appendActionTo(state, action)
+    def updateStep(self, state, action, vt, t):
+        s = self.getQState(state)
+        a = self.getActionOf(s, action)
+        a.addVisit()
+        a.value = self.estimateNewValue(a.value, [self.alfa, a.visits], vt, t)
 
     # The return is the total discounted reward
     def estimateReturns(self, rewards):
@@ -76,38 +79,13 @@ class Policy:
     def getAction(self, state):
         for s in self.Q:
             if s == state:
-                return self.chooseEpsilonGreedy(self.Q[state])
+                return self.actionChooser.chooseAction(self.Q[s])
         return Action(self.env.action_space.sample())
 
-    #
-    def chooseEpsilonGreedy(self, values):
-        prob, actions = self.calculateProbabilities(values)
-        a = Action(self.weighted_values(actions, prob))
-        print(str(a))
-        return a
-
-    #
-    def calculateProbabilities(self, values):
-        best_action = max(values, key=attrgetter('value'))
-        prob = []
-        actions = []
-        for item in values:
-            p = self.epsilon / self.m
-            if item == best_action:
-                p += 1 - self.epsilon
-            actions.append(item.id)
-            prob.append(p)
-        return prob, actions
-
-    #
-    def weighted_values(self, values, probabilities, size=1):
-        bins = np.add.accumulate(probabilities)
-        return values[np.digitize(random_sample(size), bins)]
-
-    #
-    def set(self, env):
+    # sets the base values
+    def set(self, env, cellSize):
         self.env = env
-        self.m = env.action_space.n
+        self.cellSize = cellSize
 
     # reset the history
     def newEpisode(self):
@@ -119,9 +97,3 @@ class Policy:
             for v in self.Q[key]:
                 print(str(v) + " ", end="")
             print()
-
-    def truncateObservation(self, obs):
-        new_obs = []
-        for o in obs:
-            new_obs.append(float('%.3f' % (o)))
-        return new_obs

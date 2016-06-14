@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from policy import Policy  # lint:ok
-from state import State  # lint:ok
+from policy import Policy
+from state import State
 
 
 class MCPolicy(Policy):
 
     def estimateNewValue(self, value, alfa, vt, t):
-        return value + alfa * (vt - value)
+        return value + alfa[1] * (vt - value)
 
     #
     def doEpisode(self, episode_n):
@@ -14,8 +14,8 @@ class MCPolicy(Policy):
         observation = self.env.reset()
         step = 0
         while True:
-            last_state = State(self.truncateObservation(observation))
-            #env.render()
+            last_state = State(observation, self.cellSize)
+            self.env.render()
             step += 1
 
             act = self.getAction(last_state)
