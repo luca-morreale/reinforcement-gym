@@ -3,6 +3,7 @@ from mc_policy import MCPolicy  # lint:ok
 from td_policy import TDPolicy  # lint:ok
 from sarsa_policy import SarsaPolicy  # lint:ok
 from epsilon_greedy import EpsilonGreedyChooser
+from softmax import SoftmaxChooser
 import gym
 #error somewhere, check comparision of hash, equalitiy etc...
 
@@ -13,10 +14,11 @@ def main():
     alfa = 0.6
     discount_factor = 1
     cellSize = 0.0009
+    temperature = 5
 
     # def __init__(self, discount_factor, learning_rate, epsilon):
 
-    action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
+    action_chooser = SoftmaxChooser(temperature)
 
     #pi = MCPolicy(action_chooser, discount_factor, alfa)
     #pi.set(env, cellSize)

@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 from history import History  # lint:ok
 from action import Action  # lint:ok
-from math import pow
-from operator import attrgetter
-import numpy as np
-from numpy.random import random_sample
 
 
 class Policy:

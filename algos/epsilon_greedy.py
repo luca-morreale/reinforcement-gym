@@ -12,12 +12,6 @@ class EpsilonGreedyChooser(ActionChooser):
         self.epsilon = epsilon
         self.m = m
 
-    # choose an action following an epsilon-greedy strategy
-    def chooseAction(self, actions):
-        prob, values = self.calculateProbabilities(actions)
-        val = Action(self.weighted_values(values, prob))
-        return val
-
     # estimate the probability of each action
     def calculateProbabilities(self, actions):
         best_action = max(actions, key=attrgetter('value'))
@@ -30,8 +24,3 @@ class EpsilonGreedyChooser(ActionChooser):
             vals.append(i)
             probs.append(p)
         return probs, vals
-
-    # return the value of the action
-    def weighted_values(self, values, probabilities):
-        bins = np.add.accumulate(probabilities)
-        return values[np.digitize(random_sample(1)[0], bins)]
