@@ -3,21 +3,26 @@ from policy import Policy  # lint:ok
 from state import State  # lint:ok
 
 
-class TDPolicy(Policy):
+class SarsaPolicy(Policy):
 
     #
     def doEpisode(self, episode_n):
         observation = self.env.reset()
+        self.nextState = State(observation, self.cellSize)
+        self.nextAction = self.getAction(self.nextState)
+
         step = 0
         while True:
-            last_state = State(observation, self.cellSize)
-            self.env.render()
+            last_state = self.nextState
+            act = self.nextAction
+            #self.env.render()
             step += 1
 
-            act = self.getAction(last_state)
             observation, reward, done, info = self.env.step(act.id)
 
             self.history.addStep(last_state, act, reward)
+            self.nextState = State(observation, self.cellSize)
+
             self.updateStep(last_state, act, reward, step - 1)
 
             if done or step > self.env.spec.timestep_limit:
@@ -28,4 +33,6 @@ class TDPolicy(Policy):
 
     def estimateNewValue(self, value, alfa, vt, t):
         vt = self.history.rewards[t]
-        return value + alfa[0] * (vt + self.gamma * value - value)
+        self.nextAction = self.getAction(self.nextState)
+        return value + alfa[0] * (vt + self.gamma *
+                                self.nextAction.value - value)
