@@ -2,43 +2,49 @@
 from mc_policy import MCPolicy  # lint:ok
 from td_policy import TDPolicy  # lint:ok
 from sarsa_policy import SarsaPolicy  # lint:ok
+
 from epsilon_greedy import EpsilonGreedyChooser
 from softmax import SoftmaxChooser
-import gym
-#error somewhere, check comparision of hash, equalitiy etc...
 
+from HashGeneralizer import HashGeneralizer
+from NormGeneralizer import NormGeneralizer
+
+from updater import Updater
+from updaterTrace import UpdaterTraced
+
+import gym
+
+
+#MountainCar-v0
+#CartPole-v0
 
 def main():
     env = gym.make('CartPole-v0')
-    epsilon = 0.99
-    alfa = 0.6
+    epsilon = 0.1
+    alfa = 0.5
     discount_factor = 1
-    cellSize = 0.0009
+    lambda_ = 0.9
+    cellSize = 0.6
     temperature = 5
 
-    # def __init__(self, discount_factor, learning_rate, epsilon):
+    #action_chooser = SoftmaxChooser(temperature)
+    action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
 
-    action_chooser = SoftmaxChooser(temperature)
+    #generalizer = NormGeneralizer(cellSize)
+    generalizer = HashGeneralizer(cellSize)
+
+    #updater = Updater(discount_factor, alfa)
+    updater = UpdaterTraced(discount_factor, alfa, lambda_)
 
     #pi = MCPolicy(action_chooser, discount_factor, alfa)
-    #pi.set(env, cellSize)
+    #pi = TDPolicy(action_chooser, discount_factor, alfa)
+    pi = SarsaPolicy(action_chooser, generalizer, updater)
+    pi.set(env, cellSize)
 
     #env.monitor.start('./cartpole-experiment-1')
 
-    #for episode in range(1, 400):
-    #    pi.doEpisode(episode)
-
-    #env.monitor.close()
-
-    print()
-
-    pi2 = SarsaPolicy(action_chooser, discount_factor, alfa)
-    pi2.set(env, cellSize)
-
-    #env.monitor.start('./cartpole-experiment-1')
-
-    for episode in range(1, 600):
-        pi2.doEpisode(episode)
+    for episode in range(1, 5000):
+        pi.doEpisode(episode)
 
     #env.monitor.close()
 

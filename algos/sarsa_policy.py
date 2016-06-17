@@ -20,19 +20,17 @@ class SarsaPolicy(Policy):
 
             observation, reward, done, info = self.env.step(act.id)
 
-            self.history.addStep(last_state, act, reward)
+            self.appendToHistory(last_state, act, reward)
             self.nextState = State(observation, self.cellSize)
 
             self.updateStep(last_state, act, reward, step - 1)
-
+            #self.prettyPrintQ()
             if done or step > self.env.spec.timestep_limit:
                 print(('finished episode', episode_n, 'steps', step))
                 break
+        self.newEpisode()
 
-        self.epsilon = 1 / episode_n
-
-    def estimateNewValue(self, value, alfa, vt, t):
-        vt = self.history.rewards[t]
+    def estimateDelta(self, value, alfa, gamma, vt, rt):
         self.nextAction = self.getAction(self.nextState)
-        return value + alfa[0] * (vt + self.gamma *
+        return alfa[0] * (rt + gamma *
                                 self.nextAction.value - value)

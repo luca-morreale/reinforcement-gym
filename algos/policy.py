@@ -5,78 +5,45 @@ from action import Action  # lint:ok
 
 class Policy:
 
-    def __init__(self, actionChooser, discount_factor, learning_rate):
+    def __init__(self, actionChooser, generalizer, updater):
         self.actionChooser = actionChooser
-        self.gamma = discount_factor
-        self.alfa = learning_rate
+        self.generalizer = generalizer
+        self.updater = updater
         self.newEpisode()
         self.Q = {}
 
     def doEpisode(self, env):
         return NotImplementedError()
 
-    def estimateNewValue(self, value, alfa, vt):
+    def estimateDelta(self, value, alfa, gamma, vt, rt):
         return NotImplementedError()
 
     def updateSteps(self, steps):
         return NotImplementedError()
 
-    def updateTrace(self, trace):
-        return NotImplementedError()
-
-    # update the value of epsilon based on the number of episodes
-    def setEpisodeN(self, n):
-        self.epsilon = 1 / n
-
-    # return the state equivalent to the given one, in case no match
-    # has been found the state will be added
-    def getQState(self, state):
-        for s in self.Q:
-            if s == state:
-                return s
-        self.Q[state] = []
-        return state
-
-    # return the action equivalent to the one given, in case no match has
-    # been found the action will be added
-    def getActionOf(self, state, action):
-        for a in self.Q[state]:
-            if a == action:
-                return a
-        self.Q[state].append(action)
-        return action
+    def updateTrace(self):
+        #self.updater.updateTrace(self.trace, self)
+        pass
 
     # update all values of state-action pair
     def updateEpisode(self):
-        states, actions, rewards = self.history.getSequence()
-        vt = self.estimateReturns(rewards)
-        for i in range(len(states)):
-            self.updateStep(states[i], actions[i], vt[i], i)
+        self.updater.updateEpisode(self.history, self)
         self.newEpisode()
 
     # update the single value of a pair action-value
     def updateStep(self, state, action, vt, t):
-        s = self.getQState(state)
-        a = self.getActionOf(s, action)
-        a.addVisit()
-        a.value = self.estimateNewValue(a.value, [self.alfa, a.visits], vt, t)
-
-    # The return is the total discounted reward
-    def estimateReturns(self, rewards):
-        returns = []
-        for i in range(len(rewards)):
-            r = 0
-            for ii in range(i, len(rewards)):
-                r += pow(self.gamma, ii - i) * rewards[i]
-            returns.append(r)
-        return returns
+        self.updater.updateStep(state, action, vt, t, self)
 
     # return an action
     def getAction(self, state):
-        for s in self.Q:
-            if s == state:
-                return self.actionChooser.chooseAction(self.Q[s])
+        s = self.generalizer.getQState(self.Q, state)
+        if self.Q[s]:
+            return self.actionChooser.chooseAction(self.Q[s])
         return Action(self.env.action_space.sample())
+
+    def appendToHistory(self, state, action, reward):
+        s = self.generalizer.getQState(self.Q, state)
+        self.history.addStep(s, action, reward)
 
     # sets the base values
     def set(self, env, cellSize):
@@ -86,6 +53,7 @@ class Policy:
     # reset the history
     def newEpisode(self):
         self.history = History()
+        self.actionChooser.newEpisode()
 
     def prettyPrintQ(self):
         for key in self.Q:

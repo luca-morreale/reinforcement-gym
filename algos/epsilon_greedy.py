@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from action_chooser import ActionChooser
-from action import Action
 from operator import attrgetter
-import numpy as np
-from numpy.random import random_sample
 
 
 class EpsilonGreedyChooser(ActionChooser):
@@ -11,6 +8,9 @@ class EpsilonGreedyChooser(ActionChooser):
     def __init__(self, epsilon, m):
         self.epsilon = epsilon
         self.m = m
+
+    def newEpisode(self):
+        self.epsilon = self.epsilon * 0.999  # added epsilon decay
 
     # estimate the probability of each action
     def calculateProbabilities(self, actions):

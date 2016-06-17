@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from scipy.spatial.distance import euclidean
 
 
 class State:
@@ -16,9 +15,8 @@ class State:
         self.visits += 1
 
     def __eq__(self, other):
-        if not isinstance(other, State):
-            return False
-        return euclidean(self.obs, other.obs) < self.cellSize
+
+        return other.obs == self.obs
 
     # spatial hashing
     def __hash__(self):

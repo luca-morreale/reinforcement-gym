@@ -5,9 +5,6 @@ from state import State
 
 class MCPolicy(Policy):
 
-    def estimateNewValue(self, value, alfa, vt, t):
-        return value + alfa[1] * (vt - value)
-
     #
     def doEpisode(self, episode_n):
 
@@ -21,12 +18,14 @@ class MCPolicy(Policy):
             act = self.getAction(last_state)
             observation, reward, done, info = self.env.step(act.id)
 
-            self.history.addStep(last_state, act, reward)
+            self.appendToHistory(last_state, act, reward)
 
             if done or step > self.env.spec.timestep_limit:
                 print(('finished episode', episode_n, 'steps', step))
                 break
 
         self.updateEpisode()
-        self.epsilon = 1 / episode_n
+
+    def estimateDelta(self, value, alfa, vt, rt):
+        return alfa[1] * (vt - value)
 

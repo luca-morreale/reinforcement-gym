@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 from action_chooser import ActionChooser
-from action import Action
-from operator import attrgetter
-import numpy as np
-from numpy.random import random_sample
 from numpy import exp
 
 
@@ -16,7 +12,7 @@ class SoftmaxChooser(ActionChooser):
     def calculateProbabilities(self, actions):
         probs = []
         vals = []
-        summation = sum(actions, key=attrgetter('value')) / self.temperature
+        summation = sum(c.value for c in actions) / self.temperature
         for a in actions:
             probs.append(exp(a.value / self.temperature) / exp(summation))
             vals.append(a.id)

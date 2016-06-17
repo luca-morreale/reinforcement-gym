@@ -18,3 +18,6 @@ class ActionChooser:
     def weighted_values(self, values, probabilities):
         bins = np.add.accumulate(probabilities)
         return values[np.digitize(random_sample(1)[0], bins)]
+
+    def newEpisode(self):
+        pass

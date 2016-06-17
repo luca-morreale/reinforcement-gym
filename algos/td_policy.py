@@ -17,15 +17,13 @@ class TDPolicy(Policy):
             act = self.getAction(last_state)
             observation, reward, done, info = self.env.step(act.id)
 
-            self.history.addStep(last_state, act, reward)
+            self.appendToHistory(last_state, act, reward)
             self.updateStep(last_state, act, reward, step - 1)
 
             if done or step > self.env.spec.timestep_limit:
                 print(('finished episode', episode_n, 'steps', step))
                 break
+        self.newEpisode()
 
-        self.epsilon = 1 / episode_n
-
-    def estimateNewValue(self, value, alfa, vt, t):
-        vt = self.history.rewards[t]
-        return value + alfa[0] * (vt + self.gamma * value - value)
+    def estimateDelta(self, value, alfa, gamma, vt, rt):
+        return alfa[0] * (rt + gamma * value - value)
