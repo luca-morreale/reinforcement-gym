@@ -15,7 +15,8 @@ class SarsaPolicy(Policy):
         while True:
             last_state = self.nextState
             act = self.nextAction
-            #self.env.render()
+            if self.show:
+                self.env.render()
             step += 1
 
             observation, reward, done, info = self.env.step(act.id)

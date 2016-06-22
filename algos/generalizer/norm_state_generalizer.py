@@ -9,19 +9,12 @@ class NormGeneralizer(StateGeneralizer):
         super().__init__()
         self.cellSize = cellSize
 
-    def getQState(self, Q, state):
-        for s in Q:
+    def getQState(self, state):
+        for s in self.Q:
             if self.isNear(s, state):
                 return s
-        Q[state] = []
+        self.Q[state] = []
         return state
-
-    def getActionOf(self, Q, state, action):
-        for a in Q[state]:
-            if a == action:
-                return a
-        Q[state].append(action)
-        return action
 
     def isNear(self, o1, o2):
         return euclidean(o1.obs, o2.obs) < self.cellSize

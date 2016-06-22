@@ -12,7 +12,8 @@ class MCPolicy(Policy):
         step = 0
         while True:
             last_state = State(observation, self.cellSize)
-            self.env.render()
+            if self.show:
+                self.env.render()
             step += 1
 
             act = self.getAction(last_state)
@@ -26,6 +27,6 @@ class MCPolicy(Policy):
 
         self.updateEpisode()
 
-    def estimateDelta(self, value, alfa, vt, rt):
+    def estimateDelta(self, value, alfa, gamma, vt, rt):
         return alfa[1] * (vt - value)
 

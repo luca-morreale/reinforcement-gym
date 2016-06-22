@@ -10,7 +10,6 @@ class Policy:
         self.generalizer = generalizer
         self.updater = updater
         self.newEpisode()
-        self.Q = {}
 
     def doEpisode(self, env):
         return NotImplementedError()
@@ -36,28 +35,22 @@ class Policy:
 
     # return an action
     def getAction(self, state):
-        s = self.generalizer.getQState(self.Q, state)
-        if self.Q[s]:
-            return self.actionChooser.chooseAction(self.Q[s])
+        acts = self.generalizer.getActionsFor(state)
+        if acts:
+            return self.actionChooser.chooseAction(acts)
         return Action(self.env.action_space.sample())
 
     def appendToHistory(self, state, action, reward):
-        s = self.generalizer.getQState(self.Q, state)
+        s = self.generalizer.getQState(state)
         self.history.addStep(s, action, reward)
 
     # sets the base values
-    def set(self, env, cellSize):
+    def set(self, env, cellSize, show=False):
         self.env = env
         self.cellSize = cellSize
+        self.show = show
 
     # reset the history
     def newEpisode(self):
         self.history = History()
         self.actionChooser.newEpisode()
-
-    def prettyPrintQ(self):
-        for key in self.Q:
-            print(str(key) + "-> ", end="")
-            for v in self.Q[key]:
-                print(str(v) + " ", end="")
-            print()

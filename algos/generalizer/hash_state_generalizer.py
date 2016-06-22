@@ -8,22 +8,14 @@ class HashGeneralizer(StateGeneralizer):
         super().__init__()
         self.cellSize = cellSize
 
-    def getQState(self, Q, state):
-        h = self.hashState(state)
-        if h in Q:
-            #print("collision: ", str(h), " ~ ", str(state))
+    def getQState(self, state):
+        h = self._hashState(state)
+        if h in self.Q:
             return h
-        Q[h] = []
+        self.Q[h] = []
         return h
 
-    def getActionOf(self, Q, state, action):
-        for a in Q[state]:
-            if a == action:
-                return a
-        Q[state].append(action)
-        return action
-
-    def hashState(self, s):
+    def _hashState(self, s):
         primes = [73856093, 19349663, 83492791, 67867979]
         h = 0
         for i in range(len(s.obs)):
