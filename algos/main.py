@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from mc_policy import MCPolicy  # lint:ok
-from td_policy import TDPolicy  # lint:ok
-from sarsa_policy import SarsaPolicy  # lint:ok
+from policy.mc_policy import MCPolicy  # lint:ok
+from policy.td_policy import TDPolicy  # lint:ok
+from policy.sarsa_policy import SarsaPolicy  # lint:ok
 
-from epsilon_greedy import EpsilonGreedyChooser
-from softmax import SoftmaxChooser
+from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
+from action_chooser.softmax_chooser import SoftmaxChooser
 
-from HashGeneralizer import HashGeneralizer
-from NormGeneralizer import NormGeneralizer
+from generalizer.hash_state_generalizer import HashGeneralizer
+from generalizer.norm_state_generalizer import NormGeneralizer
 
-from updater import Updater
-from updaterTrace import UpdaterTraced
+from updater.updater import Updater
+from updater.trace_updater import UpdaterTraced
 
 import gym
 
@@ -24,7 +24,7 @@ def main():
     alfa = 0.5
     discount_factor = 1
     lambda_ = 0.9
-    cellSize = 0.6
+    cellSize = 0.2
     temperature = 5
 
     #action_chooser = SoftmaxChooser(temperature)

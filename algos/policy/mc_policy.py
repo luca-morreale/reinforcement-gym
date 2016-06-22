@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from policy import Policy
+from policy.policy import Policy
 from state import State
 
 

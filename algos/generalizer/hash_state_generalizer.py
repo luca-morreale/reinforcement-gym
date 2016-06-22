@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from generalizer import StateGeneralizer
+from generalizer.state_generalizer import StateGeneralizer
 
 
 class HashGeneralizer(StateGeneralizer):
@@ -28,7 +28,7 @@ class HashGeneralizer(StateGeneralizer):
         h = 0
         for i in range(len(s.obs)):
             h += (s.obs[i] / self.cellSize) * primes[i]
-        return h
+        return int(h)
         # hash = (int(pos.x / cellSize) * 73856093) ^ (int(pos.y / cellSize)
         # * 19349663) ^ (int(pos.z / cellSize) * 83492791);
 

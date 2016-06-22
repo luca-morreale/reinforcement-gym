@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from action_chooser import ActionChooser
+from action_chooser.action_chooser import ActionChooser
 from operator import attrgetter
 
 

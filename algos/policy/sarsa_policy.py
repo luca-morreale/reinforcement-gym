@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from policy import Policy  # lint:ok
+from policy.policy import Policy  # lint:ok
 from state import State  # lint:ok
 
 

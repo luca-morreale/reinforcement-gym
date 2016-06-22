@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from scipy.spatial.distance import euclidean
-from generalizer import StateGeneralizer
+from generalizer.state_generalizer import StateGeneralizer
 
 
 class NormGeneralizer(StateGeneralizer):

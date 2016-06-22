@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from updater import Updater
-from trace import Trace
+from updater.updater import Updater
+from updater.trace import Trace
 
 
 class UpdaterTraced(Updater):
