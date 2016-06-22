@@ -24,7 +24,7 @@ def main():
     alfa = 0.5
     discount_factor = 1
     lambda_ = 0.9
-    cellSize = 0.2
+    cellSize = 0.0002
     temperature = 5
 
     #action_chooser = SoftmaxChooser(temperature)
@@ -36,8 +36,8 @@ def main():
     #updater = Updater(discount_factor, alfa)
     updater = UpdaterTraced(discount_factor, alfa, lambda_)
 
-    #pi = MCPolicy(action_chooser, discount_factor, alfa)
-    #pi = TDPolicy(action_chooser, discount_factor, alfa)
+    #pi = MCPolicy(action_chooser, generalizer, updater)
+    #pi = TDPolicy(action_chooser, generalizer, updater)
     pi = SarsaPolicy(action_chooser, generalizer, updater)
     pi.set(env, cellSize)
 
