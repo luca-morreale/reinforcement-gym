@@ -3,7 +3,7 @@
 
 class Action:
 
-    def __init__(self, id):
+    def __init__(self, id, value=1):
         self.id = id
         self.value = 1
         self.visits = 0

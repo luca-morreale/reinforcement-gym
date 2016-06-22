@@ -24,7 +24,7 @@ class SarsaPolicy(Policy):
             self.appendToHistory(last_state, act, reward)
             self.nextState = State(observation, self.cellSize)
 
-            self.updateStep(last_state, act, reward, step - 1)
+            self.update(last_state, act, reward, step - 1)
             #self.prettyPrintQ()
             if done or step > self.env.spec.timestep_limit:
                 print(('finished episode', episode_n, 'steps', step))

@@ -5,10 +5,9 @@ from action import Action  # lint:ok
 
 class Policy:
 
-    def __init__(self, actionChooser, generalizer, updater):
+    def __init__(self, actionChooser, Q):
         self.actionChooser = actionChooser
-        self.generalizer = generalizer
-        self.updater = updater
+        self.Q = Q
         self.newEpisode()
 
     def doEpisode(self, env):
@@ -20,28 +19,24 @@ class Policy:
     def updateSteps(self, steps):
         return NotImplementedError()
 
-    def updateTrace(self):
-        #self.updater.updateTrace(self.trace, self)
-        pass
-
     # update all values of state-action pair
     def updateEpisode(self):
-        self.updater.updateEpisode(self.history, self)
+        self.Q.updateEpisode(self.history, self)
         self.newEpisode()
 
     # update the single value of a pair action-value
-    def updateStep(self, state, action, vt, t):
-        self.updater.updateStep(state, action, vt, t, self)
+    def update(self, state, action, vt, t):
+        self.Q.update(state, action, vt, t, self)
 
     # return an action
     def getAction(self, state):
-        acts = self.generalizer.getActionsFor(state)
+        acts = self.Q.getActionsFor(state)
         if acts:
             return self.actionChooser.chooseAction(acts)
         return Action(self.env.action_space.sample())
 
     def appendToHistory(self, state, action, reward):
-        s = self.generalizer.getQState(state)
+        s = self.Q.getQState(state)
         self.history.addStep(s, action, reward)
 
     # sets the base values

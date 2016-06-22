@@ -8,6 +8,7 @@ from action_chooser.softmax_chooser import SoftmaxChooser
 
 from generalizer.hash_state_generalizer import HashGeneralizer
 from generalizer.norm_state_generalizer import NormGeneralizer
+from generalizer.tiles_state_generalizer import TilesStateGeneralizer
 
 from updater.updater import Updater
 from updater.trace_updater import UpdaterTraced
@@ -20,25 +21,36 @@ import gym
 
 def main():
     env = gym.make('CartPole-v0')
+    cellSize = 0.0002
+
+    num_tilings = 10
+    num_tiles = 8
+    obs_space = env.observation_space
+    m = env.action_space.n
+    n = 30000
+
     epsilon = 0.1
+
     alfa = 0.5
     discount_factor = 1
     lambda_ = 0.9
-    cellSize = 0.0002
+
     temperature = 5
 
     #action_chooser = SoftmaxChooser(temperature)
     action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
 
-    #generalizer = NormGeneralizer(cellSize)
-    generalizer = HashGeneralizer(cellSize)
-
     #updater = Updater(discount_factor, alfa)
     updater = UpdaterTraced(discount_factor, alfa, lambda_)
 
+    #generalizer = NormGeneralizer(updater, cellSize)
+    #generalizer = HashGeneralizer(updater, cellSize)
+    generalizer = TilesStateGeneralizer(updater, num_tilings, num_tiles,
+                                                                obs_space, m, n)
+
     #pi = MCPolicy(action_chooser, generalizer, updater)
     #pi = TDPolicy(action_chooser, generalizer, updater)
-    pi = SarsaPolicy(action_chooser, generalizer, updater)
+    pi = SarsaPolicy(action_chooser, generalizer)
     pi.set(env, cellSize)
 
     #env.monitor.start('./cartpole-experiment-1')

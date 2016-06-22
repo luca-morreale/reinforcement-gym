@@ -3,8 +3,13 @@
 
 class StateGeneralizer:
 
-    def __init__(self):
+    """ Creates the Generalizer.
+    Args:
+        updater:    object in charge of update the value of actions
+    """
+    def __init__(self, updater):
         self.Q = {}
+        self.updater = updater
 
     """ Returns the state equivalent to the given one, in case no match
         has been found the state will be added.
@@ -23,10 +28,18 @@ class StateGeneralizer:
         list of object of class Action
     """
     def getActionsFor(self, state):
-        s = self.getQState(state)
-        return self.Q[s]
+        index = self.getQState(state)
+        return self.Q[index]
 
-    # prints the content of Q in a readable way
+    def update(self, state, action):
+        acts = self.getActionsFor(state)
+        for a in acts:
+            if a.id == action.id:
+                self.updater.update(action)
+
+    def updateEpisode(self, history):
+        self.updater.updateEpisode(history)
+
     """
         Prints the content of Q in a readable way
     """

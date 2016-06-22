@@ -4,8 +4,8 @@ from generalizer.state_generalizer import StateGeneralizer
 
 class HashGeneralizer(StateGeneralizer):
 
-    def __init__(self, cellSize):
-        super().__init__()
+    def __init__(self, updater, cellSize):
+        super().__init__(updater)
         self.cellSize = cellSize
 
     def getQState(self, state):
