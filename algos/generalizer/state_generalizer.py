@@ -31,14 +31,23 @@ class StateGeneralizer:
         index = self.getQState(state)
         return self.Q[index]
 
-    def update(self, state, action):
+    def update(self, state, action, reward, estimator, vt=None):
         acts = self.getActionsFor(state)
-        for a in acts:
-            if a.id == action.id:
-                self.updater.update(action)
+        state = self.getQState(state)
+        diff = list(set([action]) - set(acts))
+        self._addNewActions(state, diff)
+        self._updateStoredActions(state, acts + diff, reward, estimator, vt)
 
-    def updateEpisode(self, history):
-        self.updater.updateEpisode(history)
+    def _updateStoredActions(self, state, actions, reward, estimator, vt):
+        for action in actions:
+            self.updater.updateStep(state, action, reward, estimator, vt)
+
+    def _addNewActions(self, state, action):
+        if action:
+            self.Q[state].append(action[0])
+
+    def updateEpisode(self, history, estimator):
+        self.updater.updateEpisode(history, estimator)
 
     """
         Prints the content of Q in a readable way

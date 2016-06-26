@@ -9,12 +9,11 @@ class UpdaterTraced(Updater):
         super().__init__(discount_factor, learning_rate)
         self.e = Trace(discount_factor, lambda_)
 
-    def updateStep(self, state, action, vt, rt, estimator):
+    def updateStep(self, state, action, reward, estimator, vt=None):
         self.e.updateTrace(state)
         trace = self.e.getTrace()
+        alfa = [self.alfa, action.visits]
         for s in trace:
-            delta = estimator.estimateDelta(action.value,
-                                [self.alfa, action.visits], self.gamma, vt, rt)
+            delta = estimator.estimateDelta(action.value, alfa,
+                                                    self.gamma, reward)
             action.value += trace[s] * delta
-
-

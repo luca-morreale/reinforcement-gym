@@ -21,7 +21,7 @@ import gym
 
 def main():
     env = gym.make('CartPole-v0')
-    cellSize = 0.0002
+    cellSize = 2
 
     num_tilings = 10
     num_tiles = 8
@@ -48,14 +48,14 @@ def main():
     generalizer = TilesStateGeneralizer(updater, num_tilings, num_tiles,
                                                                 obs_space, m, n)
 
-    #pi = MCPolicy(action_chooser, generalizer, updater)
-    #pi = TDPolicy(action_chooser, generalizer, updater)
+    #pi = MCPolicy(action_chooser, generalizer)
+    #pi = TDPolicy(action_chooser, generalizer)
     pi = SarsaPolicy(action_chooser, generalizer)
     pi.set(env, cellSize)
 
     #env.monitor.start('./cartpole-experiment-1')
 
-    for episode in range(1, 5000):
+    for episode in range(1, 500):
         pi.doEpisode(episode)
 
     #env.monitor.close()

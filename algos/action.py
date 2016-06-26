@@ -20,7 +20,7 @@ class Action:
         return self.id == other.id
 
     def __hash__(self):
-        return hash(frozenset(self.id))
+        return hash(self.id)
 
     def __str__(self):
         return "Action[id: " + str(self.id) + ", value: " + \

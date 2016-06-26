@@ -28,38 +28,55 @@ class TilesStateGeneralizer(StateGeneralizer):
         self.n = n
 
     def getQState(self, state):
+        state_vars = self._createStateVar(state)
+        tiles = self._getTiles(state_vars)
+        diff = set(tiles) - set(self.Q.keys())
+        self._addTiles(diff)
+        return tiles
+
+    def _createStateVar(self, state):
         state_vars = []
         for i, var in enumerate(state.obs):
             obs_range = (self.obs_space.high[i] - self.obs_space.low[i])
             if obs_range == float('inf'):
                 obs_range = 1
             state_vars.append(var / obs_range * self.num_tiles)
+        return state_vars
 
-        tiles = self._getTiles(state_vars)
-        diff = set(tiles) - set(self.Q.keys())
-        for tile in diff:
+    def _addTiles(self, new_tile):
+        for tile in new_tile:
             self.Q[tile] = []
-        return tiles
 
     def getActionsFor(self, state):
         tiles = self.getQState(state)
         actions = []
         for i in tiles:
-            acts = self.Q[i]
-            self._accumulateAction(actions, acts)
-
+            self._joinActions(actions, self.Q[i])
         return actions
 
-    def _accumulateAction(self, actions, action):
-        common_acts = list(set(actions).intersection(action))
-        different_acts = list(set(actions) - set(action))
+    def _joinActions(self, actions, q_actions):
+        new_actions = list(set(q_actions) - set(actions))
+        old_actions = list(set(q_actions) - set(new_actions))
 
-        for act in different_acts:
-            actions.append(Action(act.id, act.id))
+        self._appendActionToTile(actions, new_actions)
+        self._accumulateActions(actions, old_actions)
 
-        for act in common_acts:
-            val = next((val for val in actions if val == act), None)
-            val.value += act.value
+    def _appendActionToTile(self, actions, new_actions):
+        for action in new_actions:
+            actions.append(Action(action.id, action.value))
+
+    def _accumulateActions(self, actions, old_actions):
+        for action in old_actions:
+            val = next((val for val in actions if val == action), None)
+            val.value += action.value
+
+    def update(self, state, action, reward, estimator, vt=None):
+        tiles = self.getQState(state)
+        for tile in tiles:
+            acts = self.Q[tile]
+            diff = list(set([action]) - set(acts))
+            self._addNewActions(tile, diff)
+            self._updateStoredActions(tile, acts + diff, reward, estimator, vt)
 
     # translated from https://web.archive.org/web/20030618225322/http://envy.cs.umass.edu/~rich/tiles.html
     def _getTiles(self, variables):

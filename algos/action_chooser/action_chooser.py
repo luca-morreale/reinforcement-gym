@@ -9,8 +9,6 @@ class ActionChooser:
     # choose an action following an epsilon-greedy strategy
     def chooseAction(self, actions):
         prob, values = self.calculateProbabilities(actions)
-        print("test")
-        print(prob, values)
         return Action(self.weighted_values(values, prob))
 
     def calculateProbabilities(self, actions):

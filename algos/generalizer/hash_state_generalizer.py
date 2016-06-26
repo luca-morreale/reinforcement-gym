@@ -23,4 +23,3 @@ class HashGeneralizer(StateGeneralizer):
         return int(h)
         # hash = (int(pos.x / cellSize) * 73856093) ^ (int(pos.y / cellSize)
         # * 19349663) ^ (int(pos.z / cellSize) * 83492791);
-

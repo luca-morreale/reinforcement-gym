@@ -27,6 +27,5 @@ class MCPolicy(Policy):
 
         self.updateEpisode()
 
-    def estimateDelta(self, value, alfa, gamma, vt, rt):
+    def estimateDelta(self, value, alfa, gamma, reward, vt):
         return alfa[1] * (vt - value)
-

@@ -25,8 +25,8 @@ class Policy:
         self.newEpisode()
 
     # update the single value of a pair action-value
-    def update(self, state, action, vt, t):
-        self.Q.update(state, action, vt, t, self)
+    def update(self, state, action, reward, vt=None):
+        self.Q.update(state, action, reward, self, vt)
 
     # return an action
     def getAction(self, state):

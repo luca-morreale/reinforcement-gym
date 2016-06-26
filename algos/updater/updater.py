@@ -12,13 +12,18 @@ class Updater:
         states, actions, rewards = history.getSequence()
         vt = self.estimateReturns(rewards)
         for i in range(len(states)):
-            self.updateStep(states[i], actions[i], vt[i], rewards[i], estimator)
+            self.updateStep(actions[i], rewards[i], estimator, vt[i])
 
     # update the single value of a pair action-value
-    def updateStep(self, state, action, vt, rt, estimator):
+    def updateStep(self, state, action, reward, estimator, vt=None):
         action.addVisit()
-        action.value += estimator.estimateDelta(action.value,
-                                [self.alfa, action.visits], self.gamma, vt, rt)
+        alfa = [self.alfa, action.visits]
+        if vt is None:
+            action.value += estimator.estimateDelta(action.value,
+                                            alfa, self.gamma, reward)
+        else:
+            action.value += estimator.estimateDelta(action.value,
+                                        alfa, self.gamma, reward, vt)
 
     # The return is the total discounted reward
     def estimateReturns(self, rewards):
