@@ -36,7 +36,7 @@ class Policy:
         return Action(self.env.action_space.sample())
 
     def appendToHistory(self, state, action, reward):
-        s = self.Q.getQState(state)
+        s = self.Q.getQState(state, action)
         self.history.addStep(s, action, reward)
 
     # sets the base values
@@ -49,3 +49,4 @@ class Policy:
     def newEpisode(self):
         self.history = History()
         self.actionChooser.newEpisode()
+        self.Q.newEpisode()

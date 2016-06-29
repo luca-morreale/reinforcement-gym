@@ -8,12 +8,23 @@ class Trace:
         self.gamma = gamma
         self.e = {}
 
-    def updateTrace(self, state):
+    def updateTrace(self, state_action):
+        self._updateTrace()
+        if isinstance(state_action, list):
+            for s in state_action:
+                self.e[s] = 1
+        else:
+            self.e[state_action] = 1
+
+    def _updateTrace(self):
         for s in self.e:
             self.e[s] = self.gamma * self.lambda_ * self.e[s]
             if self.e[s] < 0.01:
                 self.e[s] = 0
-        self.e[state] = 1
+        self.e = {k: v for k, v in self.e.items() if v > 0}
 
     def getTrace(self):
         return self.e
+
+    def newEpisode(self):
+        self.e = {}

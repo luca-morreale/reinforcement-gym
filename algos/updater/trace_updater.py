@@ -9,11 +9,14 @@ class UpdaterTraced(Updater):
         super().__init__(discount_factor, learning_rate)
         self.e = Trace(discount_factor, lambda_)
 
-    def updateStep(self, state, action, reward, estimator, vt=None):
-        self.e.updateTrace(state)
+    def updateStep(self, state_action, reward, estimator, vt=None):
+        self.e.updateTrace(state_action)
         trace = self.e.getTrace()
-        alfa = [self.alfa, action.visits]
-        for s in trace:
-            delta = estimator.estimateDelta(action.value, alfa,
-                                                    self.gamma, reward)
-            action.value += trace[s] * delta
+        for sa in trace:
+            alfa = [self.alfa, sa.visits]
+            delta = estimator.estimateDelta(sa.value, alfa, self.gamma, reward)
+            sa.value += trace[sa] * delta
+
+    def newEpisode(self):
+        self.e.newEpisode()
+        self.pairs = {}

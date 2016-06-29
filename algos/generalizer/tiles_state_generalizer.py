@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from generalizer.state_generalizer import StateGeneralizer
+from state_action import StateAction
 from action import Action
 import numpy as np
 import math
@@ -26,14 +27,34 @@ class TilesStateGeneralizer(StateGeneralizer):
         self.obs_space = obs_space
         self.m = m
         self.n = n
+        self._initDict()
 
-    def getQState(self, state):
+    def _initDict(self):
+        for i in range(self.n):
+            self.Q[i] = StateAction(i)
+
+    """Returns a generalized version of the state-action.
+
+    Args:
+        state:     normal version of the state
+        action:    action
+
+    Returns:
+        list of integer representing the state-action
+    """
+    def getQState(self, state, action):
         state_vars = self._createStateVar(state)
-        tiles = self._getTiles(state_vars)
-        diff = set(tiles) - set(self.Q.keys())
-        self._addTiles(diff)
+        tiles = self._getTiles(state_vars, action.id)
         return tiles
 
+    """Returns a generalized version of the state.
+
+    Args:
+        state:     normal version of the state
+
+    Returns:
+        list of integer representing the state
+    """
     def _createStateVar(self, state):
         state_vars = []
         for i, var in enumerate(state.obs):
@@ -43,45 +64,57 @@ class TilesStateGeneralizer(StateGeneralizer):
             state_vars.append(var / obs_range * self.num_tiles)
         return state_vars
 
-    def _addTiles(self, new_tile):
-        for tile in new_tile:
-            self.Q[tile] = []
+    """Returns a generalized version of the state-action, but for all
+        possible actions.
 
+    Args:
+        state:     normal version of the state
+
+    Returns:
+        list of integer representing the state
+    """
     def getActionsFor(self, state):
-        tiles = self.getQState(state)
         actions = []
-        for i in tiles:
-            self._joinActions(actions, self.Q[i])
+        for i in range(self.m):
+            tiles = self.getQState(state, Action(i))
+            self._accumulateActions(actions, tiles, i)
         return actions
 
-    def _joinActions(self, actions, q_actions):
-        new_actions = list(set(q_actions) - set(actions))
-        old_actions = list(set(q_actions) - set(new_actions))
-
-        self._appendActionToTile(actions, new_actions)
-        self._accumulateActions(actions, old_actions)
-
-    def _appendActionToTile(self, actions, new_actions):
-        for action in new_actions:
-            actions.append(Action(action.id, action.value))
-
-    def _accumulateActions(self, actions, old_actions):
-        for action in old_actions:
-            val = next((val for val in actions if val == action), None)
-            val.value += action.value
-
-    def update(self, state, action, reward, estimator, vt=None):
-        tiles = self.getQState(state)
+    def _accumulateActions(self, actions, tiles, index):
+        val = 0
         for tile in tiles:
-            acts = self.Q[tile]
-            diff = list(set([action]) - set(acts))
-            self._addNewActions(tile, diff)
-            self._updateStoredActions(tile, acts + diff, reward, estimator, vt)
+            val += self.Q[tile].value
+        actions.insert(index, Action(index, val))
 
-    # translated from https://web.archive.org/web/20030618225322/http://envy.cs.umass.edu/~rich/tiles.html
-    def _getTiles(self, variables):
+    """Update the value for a pair state-action.
+
+    Args:
+        state:         normal version of the state
+        action:        action
+        reward:        reward
+        estimator:     object which is in charge to calculate
+                        the delta of the update, must have defined estimateDelta
+        vt:            accumulated return
+
+    """
+    def update(self, state, action, reward, estimator, vt=None):
+        tiles = self.getQState(state, action)
+        state_action = self._generateList(tiles)
+        self.updater.updateStep(state_action, reward, estimator, vt)
+
+    def _generateList(self, tiles):
+        actions = []
+        for tile in tiles:
+            if self.Q[tile] not in actions:
+                actions.append(self.Q[tile])
+        return actions
+
+    # translated from https://web.archive.org/web/20030618225322/
+    #    http://envy.cs.umass.edu/~rich/tiles.html
+    def _getTiles(self, variables, hash_value):
         num_coordinates = len(variables) + 2
         coordinates = [0 for i in range(num_coordinates)]
+        coordinates[-1] = hash_value
 
         qstate = [0 for i in range(len(variables))]
         base = [0 for i in range(len(variables))]
@@ -94,16 +127,16 @@ class TilesStateGeneralizer(StateGeneralizer):
         for j in range(self.num_tilings):
             for i in range(len(variables)):
                 if (qstate[i] >= base[i]):
-                    coordinates[i] = qstate[i] - ((qstate[i] - base[i])
-                                                            % self.num_tilings)
+                    coordinates[i] = qstate[i] - (
+                                    (qstate[i] - base[i]) % self.num_tilings)
                 else:
                     coordinates[i] = qstate[i] + 1 + ((base[i] - qstate[i] - 1)
                                         % self.num_tilings) - self.num_tilings
 
                 base[i] += 1 + (2 * i)
-
             coordinates[len(variables)] = j
             tiles[j] = self._hashCoordinates(coordinates)
+
         return tiles
 
     def _hashCoordinates(self, coordinates):

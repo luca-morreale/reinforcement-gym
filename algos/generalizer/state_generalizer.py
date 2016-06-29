@@ -36,11 +36,11 @@ class StateGeneralizer:
         state = self.getQState(state)
         diff = list(set([action]) - set(acts))
         self._addNewActions(state, diff)
-        self._updateStoredActions(state, acts + diff, reward, estimator, vt)
+        self._updateStoredActions(acts + diff, reward, estimator, vt)
 
-    def _updateStoredActions(self, state, actions, reward, estimator, vt):
+    def _updateStoredActions(self, actions, reward, estimator, vt):
         for action in actions:
-            self.updater.updateStep(state, action, reward, estimator, vt)
+            self.updater.updateStep(action, reward, estimator, vt)
 
     def _addNewActions(self, state, action):
         if action:
@@ -48,6 +48,9 @@ class StateGeneralizer:
 
     def updateEpisode(self, history, estimator):
         self.updater.updateEpisode(history, estimator)
+
+    def newEpisode(self):
+        self.updater.newEpisode()
 
     """
         Prints the content of Q in a readable way
