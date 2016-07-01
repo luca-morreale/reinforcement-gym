@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
-from action_chooser.action_chooser import ActionChooser
+from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
 import numpy as np
-import random
 
 
-class VariationEpsilonGreedyChooser(ActionChooser):
+class VariationEpsilonGreedyChooser(EpsilonGreedyChooser):
 
-    def __init__(self, epsilon, env):
-        self.epsilon = epsilon
-        self.env = env
-
-    def newEpisode(self):
-        self.epsilon = self.epsilon * 0.999  # added epsilon decay
+    def __init__(self, epsilon, m):
+        super().__init__(epsilon, m)
+        self.np_random = np.random.RandomState()
 
     # choose an action following an epsilon-greedy strategy
     def chooseAction(self, actions):
         next_action = np.argmax(actions)
         if np.random.random() < self.epsilon:
-            next_action = self.env.action_space.sample()
-            #next_action = np.random.randint(0, self.m - 1)
+            next_action = self.np_random.randint(self.m)
         return next_action

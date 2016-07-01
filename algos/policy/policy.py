@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from history import History
 from state_action import StateAction
-import numpy as np
 
 
 class Policy:
@@ -10,12 +9,25 @@ class Policy:
         self.actionChooser = actionChooser
         self.Q = Q
         self.updater = updater
-        self.epsilon = 0.1
         self.newEpisode()
 
+    """ Defines the procedure to perform an entire episode.
+
+    Args:
+        env:    environment on which act.
+    """
     def doEpisode(self, env):
         return NotImplementedError()
 
+    """ Calculates the delta for this specific policy.
+
+    Args:
+        value:     value of the current state.
+        reward:    reward obtained taking the action from this state.
+        gamma:     discount factor parameter.
+    Returns:
+        a number representig the estimated delta.
+    """
     def estimateDelta(self, value, reward, gamma):
         return NotImplementedError()
 
@@ -32,28 +44,46 @@ class Policy:
         if acts.any():
             return self.actionChooser.chooseAction(acts)
         return self.env.action_space.sample()
-        '''next_action = np.argmax(acts)
-        if np.random.random() < self.epsilon:
-            next_action = self.env.action_space.sample()
-        return next_action'''
 
+    """ Performs an update just for the current step.
+
+    Args:
+        obs:       observation given by the evironment
+        action:    action taken, which should be an integer
+        reward:    reward obtained playing {action} from state {obs}
+    """
     def update(self, obs, action, reward):
         state_action = StateAction(obs, action)
         value = self.Q.getQValue(state_action)
         self.updater.update(state_action, value, reward, self)
 
+    def updateEpisode(self):
+        pass
+
+    """ Appends the tuple to the history for the current episode.
+
+    Args:
+        state:     observation given by the evironment
+        action:    action taken, which should be an integer
+        reward:    reward obtained playing {action} from state {obs}
+    """
     def appendToHistory(self, state, action, reward):
         self.history.addStep(state, action, reward)
 
-    # sets the base values
-    def set(self, env, cellSize, show=False):
+    """ Sets some useful values.
+
+    Args:
+        env:     environment on which play
+        show:    boolean, make render or not the environment
+    """
+    def set(self, env, show=False):
         self.env = env
-        self.cellSize = cellSize
         self.show = show
 
-    # reset the history
+    """ Resets the history and recoursively call the
+        same function to all children.
+    """
     def newEpisode(self):
         self.history = History()
         self.actionChooser.newEpisode()
         self.Q.newEpisode()
-        self.epsilon *= 0.999  # added epsilon decay

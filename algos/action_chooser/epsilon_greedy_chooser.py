@@ -9,8 +9,10 @@ class EpsilonGreedyChooser(ActionChooser):
         self.epsilon = epsilon
         self.m = m
 
+    """ Decay the epsilon parameter.
+    """
     def newEpisode(self):
-        self.epsilon = self.epsilon * 0.999  # added epsilon decay
+        self.epsilon = self.epsilon * 0.999
 
     # estimate the probability of each action
     def calculateProbabilities(self, actions):

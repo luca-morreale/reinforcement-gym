@@ -8,16 +8,16 @@ class SarsaPolicy(Policy):
         observation = self.env.reset()
 
         self.setNextStateAction(observation)
-
         step = 0
+
         while True:
             last_state = self.nextState
             action = self.nextAction
+            step += 1
 
             if self.show:
                 self.env.render()
 
-            step += 1
             observation, reward, done, info = self.env.step(action)
 
             self.appendToHistory(last_state, action, reward)
