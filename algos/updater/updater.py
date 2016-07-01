@@ -3,9 +3,10 @@
 
 class Updater:
 
-    def __init__(self, discount_factor, learning_rate):
+    def __init__(self, discount_factor, learning_rate, Q):
         self.gamma = discount_factor
         self.alfa = learning_rate
+        self.Q = Q
 
     # update all values of state-action pair
     def updateEpisode(self, history, estimator):
@@ -14,16 +15,9 @@ class Updater:
         for i in range(len(states)):
             self.updateStep(actions[i], rewards[i], estimator, vt[i])
 
-    # update the single value of a pair action-value
-    def updateStep(self, state_action, reward, estimator, vt=None):
-        state_action.addVisit()
-        alfa = [self.alfa, state_action.visits]
-        if vt is None:
-            state_action.value += estimator.estimateDelta(state_action.value,
-                                            alfa, self.gamma, reward)
-        else:
-            state_action.value += estimator.estimateDelta(state_action.value,
-                                        alfa, self.gamma, reward, vt)
+    def update(self, state_action, state_action_value, reward, estimator):
+        delta = estimator.estimateDelta(state_action_value, reward, self.gamma)
+        self.Q.addDeltaToQValue(state_action, delta * self.alfa)
 
     # The return is the total discounted reward
     def estimateReturns(self, rewards):

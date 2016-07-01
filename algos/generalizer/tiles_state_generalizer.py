@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from generalizer.state_generalizer import StateGeneralizer
 from state_action import StateAction
-from action import Action
 import numpy as np
 import math
 
@@ -18,96 +17,55 @@ class TilesStateGeneralizer(StateGeneralizer):
         m:            number of possible actions
         n:            number of possible states after the discretization
     """
-    def __init__(self, updater, num_tilings, num_tiles, obs_space, m, n):
-        super().__init__(updater)
+    def __init__(self, num_tilings, num_tiles, obs_space, m, n):
+        super().__init__(m)
         self.rndseq = np.random.randint(0, 2 ** 32 - 1, 2048)
         self.tile_vals = np.zeros(n)
         self.num_tilings = num_tilings
         self.num_tiles = num_tiles
         self.obs_space = obs_space
-        self.m = m
         self.n = n
         self._initDict()
 
     def _initDict(self):
-        for i in range(self.n):
-            self.Q[i] = StateAction(i)
+        self.Q = np.zeros(self.n)
+        #self.Q += 1
 
-    """Returns a generalized version of the state-action.
+    def getRepresentation(self, state_action):
+        state_vars = self._createStateVar(state_action)
+        return self._getTiles(state_vars, state_action.action)
 
-    Args:
-        state:     normal version of the state
-        action:    action
+    def getQValue(self, state_action):
+        tiles = self.getRepresentation(state_action)
+        return  self._accumulateValue(tiles)
 
-    Returns:
-        list of integer representing the state-action
-    """
-    def getQState(self, state, action):
-        state_vars = self._createStateVar(state)
-        tiles = self._getTiles(state_vars, action.id)
-        return tiles
-
-    """Returns a generalized version of the state.
-
-    Args:
-        state:     normal version of the state
-
-    Returns:
-        list of integer representing the state
-    """
-    def _createStateVar(self, state):
+    def _createStateVar(self, state_action):
         state_vars = []
-        for i, var in enumerate(state.obs):
+        for i, var in enumerate(state_action.obs):
             obs_range = (self.obs_space.high[i] - self.obs_space.low[i])
             if obs_range == float('inf'):
                 obs_range = 1
             state_vars.append(var / obs_range * self.num_tiles)
         return state_vars
 
-    """Returns a generalized version of the state-action, but for all
-        possible actions.
-
-    Args:
-        state:     normal version of the state
-
-    Returns:
-        list of integer representing the state
-    """
-    def getActionsFor(self, state):
-        actions = []
-        for i in range(self.m):
-            tiles = self.getQState(state, Action(i))
-            self._accumulateActions(actions, tiles, i)
-        return actions
-
-    def _accumulateActions(self, actions, tiles, index):
+    def _accumulateValue(self, tiles):
         val = 0
         for tile in tiles:
-            val += self.Q[tile].value
-        actions.insert(index, Action(index, val))
+            val += self.Q[tile]
+        return val
 
-    """Update the value for a pair state-action.
-
+    """ Update the value of a state-action pair adding the given value.
     Args:
-        state:         normal version of the state
-        action:        action
-        reward:        reward
-        estimator:     object which is in charge to calculate
-                        the delta of the update, must have defined estimateDelta
-        vt:            accumulated return
-
+        state_action:    object representing the state-action
+        value:           value to add to the current value
     """
-    def update(self, state, action, reward, estimator, vt=None):
-        tiles = self.getQState(state, action)
-        state_action = self._generateList(tiles)
-        self.updater.updateStep(state_action, reward, estimator, vt)
-
-    def _generateList(self, tiles):
-        actions = []
+    def addDeltaToQValue(self, state_action, value):
+        if isinstance(state_action, StateAction):
+            tiles = self.getRepresentation(state_action)
+        else:
+            tiles = [state_action]
         for tile in tiles:
-            if self.Q[tile] not in actions:
-                actions.append(self.Q[tile])
-        return actions
+            self.Q[tile] += value / self.num_tilings
 
     # translated from https://web.archive.org/web/20030618225322/
     #    http://envy.cs.umass.edu/~rich/tiles.html
@@ -155,3 +113,7 @@ class TilesStateGeneralizer(StateGeneralizer):
             index += self.n
 
         return index
+
+    def prettyPrintQ(self):
+        for key, value in np.ndenumerate(self.Q):
+            print((str(key) + "-> ", value))

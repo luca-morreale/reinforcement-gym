@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import numpy as np
+from state_action import StateAction
 
 
 class StateGeneralizer:
@@ -7,50 +9,39 @@ class StateGeneralizer:
     Args:
         updater:    object in charge of update the value of actions
     """
-    def __init__(self, updater):
+    def __init__(self, m):
         self.Q = {}
-        self.updater = updater
+        self.m = m
 
-    """ Returns the state equivalent to the given one, in case no match
-        has been found the state will be added.
+    """ Returns the StateAction estimated value.
     Args:
-        state:    the state to look for
+        state_action:    the state to look for
     Returns:
-        an object which identify the state
+        number
     """
-    def getQState(self, state):
+    def getQValue(self, state_action):
         return NotImplementedError()
 
-    """ Returns the list of actions that can be played in the given state
+    def getCombinedValue(self, state, action):
+        return self.getQValue(StateAction(state, action))
+
+    """ Returns an array containing the value of the corrisponding action.
     Args:
-        state:    the state to look for
+        obs:    the state to look for
     Returns:
-        list of object of class Action
+        array of numbers
     """
-    def getActionsFor(self, state):
-        index = self.getQState(state)
-        return self.Q[index]
+    def getPossibleActions(self, obs):
+        actions = np.zeros(self.m)
+        for i in range(self.m):
+            actions[i] = self.getQValue(StateAction(obs, i))
+        return actions
 
-    def update(self, state, action, reward, estimator, vt=None):
-        acts = self.getActionsFor(state)
-        state = self.getQState(state)
-        diff = list(set([action]) - set(acts))
-        self._addNewActions(state, diff)
-        self._updateStoredActions(acts + diff, reward, estimator, vt)
-
-    def _updateStoredActions(self, actions, reward, estimator, vt):
-        for action in actions:
-            self.updater.updateStep(action, reward, estimator, vt)
-
-    def _addNewActions(self, state, action):
-        if action:
-            self.Q[state].append(action[0])
-
-    def updateEpisode(self, history, estimator):
-        self.updater.updateEpisode(history, estimator)
+    def addDeltaToQValue(self, state_action, value):
+        return NotImplementedError()
 
     def newEpisode(self):
-        self.updater.newEpisode()
+        pass
 
     """
         Prints the content of Q in a readable way

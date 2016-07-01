@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from action_chooser.action_chooser import ActionChooser
-from numpy import exp
+import numpy as np
 
 
 class SoftmaxChooser(ActionChooser):
@@ -10,11 +10,8 @@ class SoftmaxChooser(ActionChooser):
 
     # estimate the probability of each action
     def calculateProbabilities(self, actions):
-        probs = []
-        vals = []
-        summation = sum(c.value for c in actions) / self.temperature
-        for a in actions:
-            probs.append(exp(a.value / self.temperature) / exp(summation))
-            vals.append(a.id)
-        return probs, vals
-
+        probs = np.zeros(np.size(actions))
+        summation = np.sum(np.exp(actions / self.temperature))
+        for i, action in np.ndenumerate(actions):
+            probs[i] = np.exp(action / self.temperature) / summation
+        return probs

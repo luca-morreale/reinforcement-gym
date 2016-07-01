@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from action_chooser.action_chooser import ActionChooser
-from operator import attrgetter
+import numpy as np
 
 
 class EpsilonGreedyChooser(ActionChooser):
@@ -14,13 +14,11 @@ class EpsilonGreedyChooser(ActionChooser):
 
     # estimate the probability of each action
     def calculateProbabilities(self, actions):
-        best_action = max(actions, key=attrgetter('value'))
-        probs = []
-        vals = []
-        for i in range(self.m):
-            p = self.epsilon / self.m
-            if i == best_action.id:
-                p += 1 - self.epsilon
-            vals.append(i)
-            probs.append(p)
-        return probs, vals
+        best_action = actions.max()
+        probs = np.zeros(np.size(actions))
+        for i, action in np.ndenumerate(actions):
+            if action == best_action:
+                probs[i] = 1 - self.epsilon
+            else:
+                probs[i] = self.epsilon / (np.size(actions) - 1)
+        return probs

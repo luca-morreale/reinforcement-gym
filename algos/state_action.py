@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
+from copy import copy
 
 
 class StateAction():
 
-    def __init__(self, _id, value=1):
-        self.id = _id
+    def __init__(self, obs, action, value=1):
+        self.obs = obs
+        self.action = copy(action)
         self.value = value
-        self.visits = 0
-
-    def addVisits(self):
-        self.visits += 1
 
     def __str__(self):
-        return "StateAction[id: " + str(self.id) + \
+        return "StateAction[obs: " + str(self.obs) + \
+                    "action: " + str(self.id) + \
                     " , value: " + str(self.value) + "]"

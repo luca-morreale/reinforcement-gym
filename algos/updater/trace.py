@@ -18,8 +18,8 @@ class Trace:
 
     def _updateTrace(self):
         for s in self.e:
-            self.e[s] = self.gamma * self.lambda_ * self.e[s]
-            if self.e[s] < 0.01:
+            self.e[s] *= self.gamma * self.lambda_
+            if self.e[s] < 0.09:
                 self.e[s] = 0
         self.e = {k: v for k, v in self.e.items() if v > 0}
 
