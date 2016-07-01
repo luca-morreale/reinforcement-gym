@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from policy.td_policy import TDPolicy
 from policy.sarsa_policy import SarsaPolicy
+from policy.q_learning_policy import QLearningPolicy
 
 from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
 from action_chooser.variation_epsilon_chooser import VariationEpsilonGreedyChooser
@@ -33,16 +35,18 @@ def main():
     gamma = 1.0
     lambda_ = 0.9
 
-    action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
-    action_chooser = VariationEpsilonGreedyChooser(epsilon, env)
+    #action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
+    action_chooser = VariationEpsilonGreedyChooser(epsilon, m)
 
     generalizer = TilesStateGeneralizer(num_tilings, num_tiles, obs_space, m, n)
 
     #updater = Updater(discount_factor, alfa, generalizer)
     updater = UpdaterTraced(gamma, alfa, generalizer, lambda_)
 
-    pi = SarsaPolicy(action_chooser, generalizer, updater)
-    pi.set(env, cellSize)
+    #pi = TDPolicy(action_chooser, generalizer, updater)
+    #pi = SarsaPolicy(action_chooser, generalizer, updater)
+    pi = QLearningPolicy(generalizer, updater, m, 100)
+    pi.set(env)
 
     #env.monitor.start('./cartpole-experiment-1')
 
