@@ -32,21 +32,22 @@ class TilesStateGeneralizer(StateGeneralizer):
         #self.Q += 1
 
     def getRepresentation(self, state_action):
-        state_vars = self._createStateVar(state_action)
-        return self._getTiles(state_vars, state_action.action)
+        tile_id = self._getTileID(state_action)
+        return self._getTiles(tile_id, state_action.action)
 
     def getQValue(self, state_action):
         tiles = self.getRepresentation(state_action)
-        return  self._accumulateValue(tiles)
+        return self._accumulateValue(tiles)
 
-    def _createStateVar(self, state_action):
-        state_vars = []
+    def _getTileID(self, state_action):
+        tile_id = []
         for i, var in enumerate(state_action.obs):
             obs_range = (self.obs_space.high[i] - self.obs_space.low[i])
             if obs_range == float('inf'):
                 obs_range = 1
-            state_vars.append(var / obs_range * self.num_tiles)
-        return state_vars
+            # store tile ID
+            tile_id.append(var / obs_range * self.num_tiles)
+        return tile_id
 
     def _accumulateValue(self, tiles):
         val = 0
@@ -67,8 +68,6 @@ class TilesStateGeneralizer(StateGeneralizer):
         for tile in tiles:
             self.Q[tile] += value / self.num_tilings
 
-    # translated from https://web.archive.org/web/20030618225322/
-    #    http://envy.cs.umass.edu/~rich/tiles.html
     def _getTiles(self, variables, hash_value):
         num_coordinates = len(variables) + 2
         coordinates = [0 for i in range(num_coordinates)]
@@ -84,6 +83,10 @@ class TilesStateGeneralizer(StateGeneralizer):
 
         for j in range(self.num_tilings):
             for i in range(len(variables)):
+                # calculate tile id in the relative tiling, adding an offset
+                #   to each tiling (prime numbers)
+                #   offset -> (qstate[i] - base[i])
+                #   tile id -> qstate[i] % self.num_tilings
                 if (qstate[i] >= base[i]):
                     coordinates[i] = qstate[i] - (
                                     (qstate[i] - base[i]) % self.num_tilings)
