@@ -31,9 +31,11 @@ def main():
     epsilon = initial_epsilon
     theta = np.zeros(N) # parameters (memory)
 
-    for episode_num in range(2000):
+    for episode_num in range(200):
         episode(epsilon, theta, env.spec.timestep_limit, episode_num)
         epsilon = epsilon * 0.999 # added epsilon decay
+    for key, value in np.ndenumerate(theta):
+            print((str(key) + "-> ", value))
 
 
 def episode(epsilon, theta, max_steps, episode_n):
@@ -52,12 +54,14 @@ def episode(epsilon, theta, max_steps, episode_n):
 
         for a in range(M):
             F[a] = get_tiles(NUM_TILINGS, state_vars, N, a)
+            print(F[a])
 
     def load_Q():
         for a in range(M):
             Q[a] = 0
             for j in range(NUM_TILINGS):
-                Q[a] += theta[F[a,j]]
+                Q[a] += theta[F[a, j]]
+            print(Q)
 
     observation = env.reset()
     load_F(observation)
@@ -77,7 +81,7 @@ def episode(epsilon, theta, max_steps, episode_n):
                 v = 1.0
 
             for j in range(NUM_TILINGS):
-                e[F[a,j]] = v
+                e[F[a, j]] = v
 
         observation, reward, done, info = env.step(action)
         delta = reward - Q[action]
