@@ -21,8 +21,7 @@ import gym
 
 def main():
     env = gym.make('CartPole-v0')
-    cellSize = 2
-
+    cellSize = 0.1
     num_tilings = 10
     num_tiles = 8
     obs_space = env.observation_space
@@ -45,7 +44,7 @@ def main():
 
     #pi = TDPolicy(action_chooser, generalizer, updater)
     #pi = SarsaPolicy(action_chooser, generalizer, updater)
-    pi = QLearningPolicy(generalizer, updater, m, 100)
+    pi = QLearningPolicy(generalizer, updater, m, 70)
     pi.set(env)
 
     #env.monitor.start('./cartpole-experiment-1')

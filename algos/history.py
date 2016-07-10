@@ -15,3 +15,9 @@ class History:
 
     def getSequence(self):
         return self.states, self.actions, self.rewards
+
+    def getReturn(self, t):
+        ret = 0
+        for i in range(t, len(self.rewards)):
+            ret += self.rewards[i]
+        return ret
