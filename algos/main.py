@@ -4,7 +4,6 @@ from policy.sarsa_policy import SarsaPolicy
 from policy.q_learning_policy import QLearningPolicy
 
 from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
-from action_chooser.variation_epsilon_chooser import VariationEpsilonGreedyChooser
 from action_chooser.softmax_chooser import SoftmaxChooser
 
 
@@ -34,8 +33,7 @@ def main():
     gamma = 1.0
     lambda_ = 0.9
 
-    #action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
-    action_chooser = VariationEpsilonGreedyChooser(epsilon, m)
+    action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
 
     generalizer = TilesStateGeneralizer(num_tilings, num_tiles, obs_space, m, n)
 
