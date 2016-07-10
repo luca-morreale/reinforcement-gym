@@ -7,9 +7,9 @@ class CoordinateGenerator():
         self.obs_space = obs_space
         self.num_tiles = num_tiles
 
-    def getCoordinates(self, state_action):
+    def getCoordinates(self, obs):
         tile_id = []
-        for i, var in enumerate(state_action):
+        for i, var in enumerate(obs):
             obs_range = (self.obs_space.high[i] - self.obs_space.low[i])
             if obs_range == float('inf'):
                 obs_range = 1
