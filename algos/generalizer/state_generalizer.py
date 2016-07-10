@@ -22,6 +22,9 @@ class StateGeneralizer:
     def getQValue(self, state_action):
         return NotImplementedError()
 
+    def getRepresentation(self, state_action):
+        return NotImplementedError()
+
     def getCombinedValue(self, state, action):
         return self.getQValue(StateAction(state, action))
 
@@ -37,6 +40,11 @@ class StateGeneralizer:
             actions[i] = self.getQValue(StateAction(obs, i))
         return actions
 
+    """ Update the value of a state-action pair adding the given value.
+    Args:
+        state_action:    object representing the state-action
+        value:           value to add to the current value
+    """
     def addDeltaToQValue(self, state_action, value):
         return NotImplementedError()
 
