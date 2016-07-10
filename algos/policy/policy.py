@@ -58,7 +58,7 @@ class Policy:
         self.updater.update(state_action, value, reward, self)
 
     def updateEpisode(self):
-        pass
+        return NotImplementedError()
 
     """ Appends the tuple to the history for the current episode.
 
