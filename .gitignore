@@ -2,5 +2,6 @@
 /*/__pycache__
 /*.nja
 /*/*.nja
-/rl/
+/test*/
+/test*
 /*.py
