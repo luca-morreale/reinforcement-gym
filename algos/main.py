@@ -7,8 +7,7 @@ from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
 from action_chooser.variation_epsilon_chooser import VariationEpsilonGreedyChooser
 from action_chooser.softmax_chooser import SoftmaxChooser
 
-from generalizer.norm_state_generalizer import NormGeneralizer
-from generalizer.hash_state_generalizer import HashGeneralizer
+
 from generalizer.tiles_state_generalizer import TilesStateGeneralizer
 
 from updater.updater import Updater
@@ -22,7 +21,7 @@ import gym
 
 def main():
     env = gym.make('CartPole-v0')
-    cellSize = 0.1
+    cellSize = 2
 
     num_tilings = 10
     num_tiles = 8
@@ -36,11 +35,9 @@ def main():
     gamma = 1.0
     lambda_ = 0.9
 
-    action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
+    #action_chooser = EpsilonGreedyChooser(epsilon, env.action_space.n)
     action_chooser = VariationEpsilonGreedyChooser(epsilon, m)
 
-    generalizer = NormGeneralizer(m, cellSize)
-    generalizer = HashGeneralizer(m, cellSize, obs_space)
     generalizer = TilesStateGeneralizer(num_tilings, num_tiles, obs_space, m, n)
 
     #updater = Updater(discount_factor, alfa, generalizer)
@@ -51,12 +48,12 @@ def main():
     pi = QLearningPolicy(generalizer, updater, m, 100)
     pi.set(env)
 
-    env.monitor.start('./mountaincar-experiment-4')
+    #env.monitor.start('./cartpole-experiment-1')
 
-    for episode in range(1, 500):
+    for episode in range(1, 2000):
         pi.doEpisode(episode)
 
-    env.monitor.close()
+    #env.monitor.close()
     #generalizer.prettyPrintQ()
 
 
