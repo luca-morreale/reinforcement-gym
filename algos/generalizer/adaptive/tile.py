@@ -108,7 +108,7 @@ class Tile(Node):
             self.action_value[state_action.action] += delta
         else:
             for c in self.children:
-                # in the future must be fixed!
+                # in the future should be fixed!
                 if c.contains(state_action.obs[0], state_action.obs[1]):
                     c.updateValue(state_action, delta)
 

@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-#from generalizer.adaptive.adaptive_tile import AdaptiveTile
-from generalizer.adaptive.tile import Tile
+from generalizer.adaptive.adaptive_tile import AdaptiveTile
+#from generalizer.adaptive.tile import Tile
 
 
 class Tiling:
 
     # obs_space must be a list of bounds
-    def __init__(self, m, obs_space, coordGenerator):
+    def __init__(self, m, obs_space, coordGenerator, p):
         self.m = m
+        self.p = p
         self.obs_space = obs_space
         self.coordGenerator = coordGenerator
-        self.tiling = Tile(None, obs_space, self.m)
+        self.tiling = AdaptiveTile(None, obs_space, self.m, p)
 
     def updateValue(self, state_action, delta):
         self.tiling.updateValue(state_action, delta)
