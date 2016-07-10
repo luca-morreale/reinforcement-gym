@@ -13,6 +13,9 @@ class StateGeneralizer:
         self.Q = {}
         self.m = m
 
+    def getRepresentation(self, state_action):
+        return NotImplementedError()
+
     """ Returns the StateAction estimated value.
     Args:
         state_action:    the state to look for
@@ -37,6 +40,11 @@ class StateGeneralizer:
             actions[i] = self.getQValue(StateAction(obs, i))
         return actions
 
+    """ Update the value of a state-action pair adding the given value.
+    Args:
+        state_action:    object representing the state-action
+        value:           value to add to the current value
+    """
     def addDeltaToQValue(self, state_action, value):
         return NotImplementedError()
 
