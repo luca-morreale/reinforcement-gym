@@ -2,8 +2,8 @@ from vectors import *
 
 
 # Given a line with coordinates 'start' and 'end' and the
-# coordinates of a point 'pnt' the proc returns the shortest 
-# distance from pnt to the line and the coordinates of the 
+# coordinates of a point 'pnt' the proc returns the shortest
+# distance from pnt to the line and the coordinates of the
 # nearest point on the line.
 #
 # 1  Convert the line segment to a vector ('line_vec').
@@ -16,47 +16,47 @@ from vectors import *
 # 8  Use t to get the nearest location on the line to the end
 #    of vector pnt_vec_scaled ('nearest').
 # 9  Calculate the distance from nearest to pnt_vec_scaled.
-# 10 Translate nearest back to the start/end line. 
+# 10 Translate nearest back to the start/end line.
 # Malcolm Kesson 16 Dec 2012
 
 def pnt2line(pnt, start, end):
-	line_vec = vector(start, end)
-	pnt_vec = vector(start, pnt)
-	line_len = length(line_vec)
-	line_unitvec = unit(line_vec)
-	pnt_vec_scaled = scale(pnt_vec, 1.0/line_len)
-	t = dot(line_unitvec, pnt_vec_scaled)	
-	if t < 0.0:
-		t = 0.0
-	elif t > 1.0:
-		t = 1.0
-	nearest = scale(line_vec, t)
-	dist = distance(nearest, pnt_vec)
-	nearest = add(nearest, start)
-	return (dist, nearest)
+    line_vec = vector(start, end)
+    pnt_vec = vector(start, pnt)
+    line_len = length(line_vec)
+    line_unitvec = unit(line_vec)
+    pnt_vec_scaled = scale(pnt_vec, 1.0/line_len)
+    t = dot(line_unitvec, pnt_vec_scaled)
+    if t < 0.0:
+        t = 0.0
+    elif t > 1.0:
+        t = 1.0
+    nearest = scale(line_vec, t)
+    dist = distance(nearest, pnt_vec)
+    nearest = add(nearest, start)
+    return (dist, nearest)
 
 if __name__=="__main__":
-	import random
-	line = [(-2,0,2),(2.5,0,0.5)]
-#	p = (2,0,0.5)
-#	d,q = pnt2line(p, line[0], line[1])
-#	print('%1.3f %1.3f %1.3f' % (q[0],q[1],q[2]))
-	f = open('/Users/mkesson/Documents/WebSite/FUNDZA_COM/vectors/point2line/diagrams/50.rib','w')
-	f.write('Color 0 0 0\n')
-	f.write('Curves "linear" [2] "nonperiodic" "P" [-2 0 2   2.5 0 0.5] "constantwidth" [0.1]\n')
-	for n in range(150):
-		x = random.uniform(-5.0,5.0)
-		y = random.uniform(-5.0,5.0)
-		z = random.uniform(-5.0,5.0)
-		pnt = (x,y,z)
-		d,near = pnt2line(pnt, line[0], line[1])
-		f.write('Color 0 0 0\n')
-		f.write('Points "P" [%1.3f %1.3f %1.3f] "constantwidth" [0.2]\n' % (x,y,z))
-		f.write('Color 0 0.8 0\n')
-		f.write('Curves "linear" [2] "nonperiodic" "P" [%1.3f %1.3f %1.3f   %1.3f %1.3f %1.3f] "constantwidth" [0.04]\n' %
-			(x,y,z, near[0],near[1],near[2]))
+    import random
+    line = [(-2,0,2),(2.5,0,0.5)]
+#    p = (2,0,0.5)
+#    d,q = pnt2line(p, line[0], line[1])
+#    print('%1.3f %1.3f %1.3f' % (q[0],q[1],q[2]))
+    f = open('/Users/mkesson/Documents/WebSite/FUNDZA_COM/vectors/point2line/diagrams/50.rib','w')
+    f.write('Color 0 0 0\n')
+    f.write('Curves "linear" [2] "nonperiodic" "P" [-2 0 2   2.5 0 0.5] "constantwidth" [0.1]\n')
+    for n in range(150):
+        x = random.uniform(-5.0,5.0)
+        y = random.uniform(-5.0,5.0)
+        z = random.uniform(-5.0,5.0)
+        pnt = (x,y,z)
+        d,near = pnt2line(pnt, line[0], line[1])
+        f.write('Color 0 0 0\n')
+        f.write('Points "P" [%1.3f %1.3f %1.3f] "constantwidth" [0.2]\n' % (x,y,z))
+        f.write('Color 0 0.8 0\n')
+        f.write('Curves "linear" [2] "nonperiodic" "P" [%1.3f %1.3f %1.3f   %1.3f %1.3f %1.3f] "constantwidth" [0.04]\n' %
+            (x,y,z, near[0],near[1],near[2]))
 
-	f.close()
+    f.close()
 
 
 
