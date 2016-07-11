@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from policy.policy import Policy
-from action_chooser.variation_epsilon_chooser import VariationEpsilonGreedyChooser
+from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
 from numpy import max
 
 
@@ -8,7 +8,7 @@ class QLearningPolicy(Policy):
 
     def __init__(self, Q, updater, m, randomEpisodes):
         self.randomEpisodes = randomEpisodes
-        self.actionChooser = VariationEpsilonGreedyChooser(1, m)
+        self.actionChooser = EpsilonGreedyChooser(1, m)
         self.Q = Q
         self.updater = updater
         self.newEpisode()

@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
+from state_action import StateAction
 from policy.policy import Policy
-from state import State
 
 
 class MCPolicy(Policy):
 
-    #
     def doEpisode(self, episode_n):
 
         observation = self.env.reset()
         step = 0
+
         while True:
-            last_state = State(observation, self.cellSize)
-            if self.show:
-                self.env.render()
+            last_state = observation
+            action = self.getAction(last_state)
             step += 1
 
-            act = self.getAction(last_state)
-            observation, reward, done, info = self.env.step(act.id)
+            if self.show:
+                self.env.render()
 
-            self.appendToHistory(last_state, act, reward)
+            observation, reward, done, info = self.env.step(action)
+            self.appendToHistory(last_state, action, reward)
 
             if done or step > self.env.spec.timestep_limit:
                 print(('finished episode', episode_n, 'steps', step))
@@ -27,5 +27,19 @@ class MCPolicy(Policy):
 
         self.updateEpisode()
 
-    def estimateDelta(self, value, alfa, gamma, reward, vt):
-        return alfa[1] * (vt - value)
+    def updateEpisode(self):
+        states, actions, rewards = self.history.getSequence()
+        states_evaluated = []
+        for t, state in enumerate(states):
+            representations = self.Q.getRepresentation(
+                                            StateAction(state, actions[t]))
+            ret = self.history.getReturn(t)
+            for r in representations:
+                if r not in states_evaluated:
+                    self.Q.addDeltaToQValue(r, self.estimateDelta(
+                                                self.Q.Q[r],
+                                                self.updater.alfa, ret))
+                    states_evaluated.append(r)
+
+    def estimateDelta(self, value, alfa, vt):
+        return alfa * (vt - value)

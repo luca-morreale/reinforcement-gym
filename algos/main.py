@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from policy.mc_policy import MCPolicy
 from policy.td_policy import TDPolicy
 from policy.sarsa_policy import SarsaPolicy
 from policy.q_learning_policy import QLearningPolicy
@@ -40,9 +41,10 @@ def main():
     #updater = Updater(discount_factor, alfa, generalizer)
     updater = UpdaterTraced(gamma, alfa, generalizer, lambda_)
 
+    #pi = MCPolicy(action_chooser, generalizer, updater)
     #pi = TDPolicy(action_chooser, generalizer, updater)
     #pi = SarsaPolicy(action_chooser, generalizer, updater)
-    pi = QLearningPolicy(generalizer, updater, m, 70)
+    pi = QLearningPolicy(generalizer, updater, m, 50)
     pi.set(env)
 
     #env.monitor.start('./cartpole-experiment-1')
