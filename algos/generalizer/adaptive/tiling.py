@@ -19,6 +19,3 @@ class Tiling:
     def getValue(self, coord, action):
         coord = self.coordGenerator.getCoordinates(coord)
         return self.tiling.getValue(coord, action)
-
-    def split(self):
-        return NotImplementedError()
