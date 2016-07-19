@@ -31,11 +31,6 @@ class NormGeneralizer(StateGeneralizer):
             return euclidean(o1.obs, o2.obs) < self.cellSize
         return False
 
-    """ Update the value of a state-action pair adding the given value.
-    Args:
-        state_action:    object representing the state-action
-        value:           value to add to the current value
-    """
     def addDeltaToQValue(self, state_action, value):
         if isinstance(state_action, StateAction):
             index = self.getRepresentation(state_action)
