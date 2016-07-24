@@ -64,11 +64,11 @@ class ArgsParser():
                             help='type of action chooser')
 
         # required only if tile generalizer has been chosen
-        parser.add_argument('-tiles', default=8, type=int,
+        parser.add_argument('-tiles', default=5, type=int,
                             help='number of tiles for each tiling')
 
         # required only if tile generalizer has been chosen
-        parser.add_argument('-tilings', default=10, type=int,
+        parser.add_argument('-tilings', default=2, type=int,
                             help='number of tilings')
 
         # required only if tile generalizer has been chosen
