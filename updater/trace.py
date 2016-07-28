@@ -8,6 +8,10 @@ class Trace:
         self.gamma = gamma
         self.e = {}
 
+    ''' Updates the trace of the states occured.
+    Args:
+        state_action:    last pair state action occured.
+    '''
     def updateTrace(self, state_action):
         self._updateTrace()
         if isinstance(state_action, list):

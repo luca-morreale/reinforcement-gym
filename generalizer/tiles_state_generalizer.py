@@ -63,43 +63,46 @@ class TilesStateGeneralizer(StateGeneralizer):
         for tile in tiles:
             self.Q[tile] += value / self.num_tilings
 
+    #  This code has been taken from
+    #  https://webdocs.cs.ualberta.ca/~sutton/tiles2.html
+    #  and revised
     def _getTiles(self, variables, hash_value):
         num_coordinates = len(variables) + 2
-        coordinates = [0 for i in range(num_coordinates)]
+        coordinates = np.zeros(num_coordinates)
         coordinates[-1] = hash_value
 
-        qstate = [0 for i in range(len(variables))]
-        base = [0 for i in range(len(variables))]
+        qstate = np.zeros(len(variables))
+        base = np.zeros(len(variables))
         tiles = [0 for i in range(self.num_tilings)]
 
         for i, variable in enumerate(variables):
             qstate[i] = int(math.floor(variable * self.num_tilings))
-            base[i] = 0
 
         for j in range(self.num_tilings):
             for i in range(len(variables)):
-                # calculate tile id in the relative tiling, adding an offset
-                #   to each tiling (prime numbers)
-                #   offset -> (qstate[i] - base[i])
-                #   tile id -> qstate[i] % self.num_tilings
-                if (qstate[i] >= base[i]):
-                    coordinates[i] = qstate[i] - (
-                                    (qstate[i] - base[i]) % self.num_tilings)
-                else:
-                    coordinates[i] = qstate[i] + 1 + ((base[i] - qstate[i] - 1)
-                                        % self.num_tilings) - self.num_tilings
-
+                coordinates[i] = self._calculateTileCoordinates(i, qstate, base)
                 base[i] += 1 + (2 * i)
+
             coordinates[len(variables)] = j
             tiles[j] = self._hashCoordinates(coordinates)
 
         return tiles
 
+    def _calculateTileCoordinates(self, i, qstate, base):
+        # calculate tile id in the relative tiling, adding an offset
+        #   to each tiling (prime numbers)
+        #   offset -> (qstate[i] - base[i])
+        #   tile id -> qstate[i] % self.num_tilings
+        if (qstate[i] >= base[i]):
+            return qstate[i] - ((qstate[i] - base[i]) % self.num_tilings)
+        else:
+            return qstate[i] + 1 + ((base[i] - qstate[i] - 1)
+                                % self.num_tilings) - self.num_tilings
+
     def _hashCoordinates(self, coordinates):
         total = 0
         for i, coordinate in enumerate(coordinates):
-            index = coordinate
-            index += (449 * i)
+            index = coordinate + (449 * i)
             index %= 2048
             while index < 0:
                 index += 2048
