@@ -22,6 +22,8 @@ import gym
 
 #MountainCar-v0
 #CartPole-v0
+#Pendulum-v0
+#Acrobot-v1
 
 def main():
     env = gym.make('CartPole-v0')
@@ -45,12 +47,12 @@ def main():
     #generalizer = HashGeneralizer(m, cellSize, obs_space)
     generalizer = TilesStateGeneralizer(num_tilings, num_tiles, obs_space, m, n)
 
-    updater = Updater(gamma, alfa, generalizer)
-    #updater = UpdaterTraced(gamma, alfa, generalizer, lambda_)
+    #updater = Updater(gamma, alfa, generalizer)
+    updater = UpdaterTraced(gamma, alfa, generalizer, lambda_)
 
-    pi = MCPolicy(action_chooser, generalizer, updater)
+    #pi = MCPolicy(action_chooser, generalizer, updater)
     #pi = TDPolicy(action_chooser, generalizer, updater)
-    #pi = SarsaPolicy(action_chooser, generalizer, updater)
+    pi = SarsaPolicy(action_chooser, generalizer, updater)
     #pi = QLearningPolicy(generalizer, updater, m, 50)
     pi.set(env)
 
