@@ -59,26 +59,10 @@ def main():
     #env.monitor.start('./cartpole-experiment-1')
 
     for episode in range(1, 1000):
-        s = time()
         pi.doEpisode(episode)
-        e = time()
-        print("time:", convert((e-s)*1000))
 
     #env.monitor.close()
     #generalizer.prettyPrintQ()
-
-
-def convert(mseconds):
-    mil = int(mseconds)
-    s = 0
-    m = 0
-    if mil >= 1000:
-        s = int(mil / 1000)
-        mil = mil % 1000
-    if s >= 60:
-        m = int(s / 60)
-        s = s % 60
-    return str(m)+":"+str(s)+":"+str(mil)
 
 
 if __name__ == "__main__":
