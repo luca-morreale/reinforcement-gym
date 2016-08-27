@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from state_action import StateAction
-from policy.policy import Policy
+from policy import Policy
 
 
 class MCPolicy(Policy):

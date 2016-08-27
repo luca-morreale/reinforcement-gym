@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from generalizer.state_generalizer import StateGeneralizer
+from state_generalizer import StateGeneralizer
 from state_action import StateAction
 import numpy as np
 
@@ -12,7 +12,7 @@ class HashGeneralizer(StateGeneralizer):
         cellSize:     size of each cell
     """
     def __init__(self, m, cellSize, obs_space):
-        super().__init__(m)
+        StateGeneralizer.__init__(self, m)
         self.cellSize = cellSize
         self.size = len(obs_space.high)
         self.rndseq = np.random.randint(0, 2 ** 32 - 1, self.size + 1)

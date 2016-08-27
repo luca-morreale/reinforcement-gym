@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from updater.updater import Updater
-from updater.trace import Trace
+from updater import Updater
+from trace import Trace
 
 
 class UpdaterTraced(Updater):
 
     def __init__(self, discount_factor, learning_rate, Q, lambda_):
-        super().__init__(discount_factor, learning_rate, Q)
+        Updater.__init__(self, discount_factor, learning_rate, Q)
         self.trace = Trace(discount_factor, lambda_)
 
     def update(self, state_action, state_action_value, reward, estimator):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from policy.policy import Policy
+from policy import Policy
 from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
 from numpy import max
 
@@ -40,7 +40,7 @@ class QLearningPolicy(Policy):
         self.newEpisode()
 
     def newEpisode(self):
-        super().newEpisode()
+        Policy.newEpisode(self)
         if self.randomEpisodes > 0:
             self.randomEpisodes -= 1
             self.actionChooser.epsilon = 1

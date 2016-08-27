@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from scipy.spatial.distance import euclidean
-from generalizer.state_generalizer import StateGeneralizer
+from .state_generalizer import StateGeneralizer
 from state_action import StateAction
 
 
@@ -12,7 +12,7 @@ class NormGeneralizer(StateGeneralizer):
         cellSize:     size of each cell
     """
     def __init__(self, m, cellSize):
-        super().__init__(m)
+        StateGeneralizer.__init__(self, m)
         self.cellSize = cellSize
 
     def getRepresentation(self, state_action):

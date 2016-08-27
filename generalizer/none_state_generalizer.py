@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from generalizer.state_generalizer import StateGeneralizer
+from state_generalizer import StateGeneralizer
 from state_action import StateAction
 
 
 class NoneGeneralizer(StateGeneralizer):
 
     def __init__(self, m):
-        super().__init__(m)
+        StateGeneralizer.__init__(self, m)
 
     def getRepresentation(self, state_action):
         for s in self.Q:

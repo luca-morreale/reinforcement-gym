@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from policy.policy import Policy  # lint:ok
+from policy import Policy  # lint:ok
 from numpy import average
 
 

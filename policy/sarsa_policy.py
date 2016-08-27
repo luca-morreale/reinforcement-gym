@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from policy.policy import Policy
+from policy import Policy
 
 
 class SarsaPolicy(Policy):

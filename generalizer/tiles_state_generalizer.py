@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from generalizer.state_generalizer import StateGeneralizer
+from state_generalizer import StateGeneralizer
 from state_action import StateAction
 import numpy as np
 import math
@@ -18,7 +18,7 @@ class TilesStateGeneralizer(StateGeneralizer):
         n:            number of possible states after the discretization
     """
     def __init__(self, num_tilings, num_tiles, obs_space, m, n):
-        super().__init__(m)
+        StateGeneralizer.__init__(self, m)
         self.rndseq = np.random.randint(0, 2 ** 32 - 1, 2048)
         self.tile_vals = np.zeros(n)
         self.num_tilings = num_tilings
