@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 import argparse
+
 import gym
 
-from policy.mc_policy import MCPolicy
-from policy.td_policy import TDPolicy
-from policy.sarsa_policy import SarsaPolicy
-from policy.q_learning_policy import QLearningPolicy
+from generalizer.coding.none_state_generalizer import NoneGeneralizer
+from generalizer.coding.hash_state_generalizer import HashGeneralizer
+from generalizer.coding.norm_state_generalizer import NormGeneralizer
+from generalizer.coding.tiles_state_generalizer import TilesStateGeneralizer
 
 from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
 
-from generalizer.none_state_generalizer import NoneGeneralizer
-from generalizer.norm_state_generalizer import NormGeneralizer
-from generalizer.hash_state_generalizer import HashGeneralizer
-from generalizer.tiles_state_generalizer import TilesStateGeneralizer
+from policy.mc_policy import MCPolicy
+from policy.q_learning_policy import QLearningPolicy
+from policy.sarsa_policy import SarsaPolicy
+from policy.td_policy import TDPolicy
 
-from updater.updater import Updater
 from updater.trace_updater import UpdaterTraced
+from updater.updater import Updater
 
 
 class Args():

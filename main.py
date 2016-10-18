@@ -1,23 +1,10 @@
 # -*- coding: utf-8 -*-
-from policy.mc_policy import MCPolicy
-from policy.td_policy import TDPolicy
-from policy.sarsa_policy import SarsaPolicy
-from policy.q_learning_policy import QLearningPolicy
+import gym
+from generalizer.coding.tiles_state_generalizer import TilesStateGeneralizer
 
 from action_chooser.epsilon_greedy_chooser import EpsilonGreedyChooser
-from action_chooser.softmax_chooser import SoftmaxChooser
-
-from generalizer.none_state_generalizer import NoneGeneralizer
-from generalizer.norm_state_generalizer import NormGeneralizer
-from generalizer.hash_state_generalizer import HashGeneralizer
-from generalizer.tiles_state_generalizer import TilesStateGeneralizer
-
-from updater.updater import Updater
+from policy.sarsa_policy import SarsaPolicy
 from updater.trace_updater import UpdaterTraced
-
-from time import time
-
-import gym
 
 
 #MountainCar-v0
@@ -26,11 +13,13 @@ import gym
 #Acrobot-v1
 
 def main():
-    env = gym.make('CartPole-v0')
+    env = gym.make('Pendulum-v0')
     cellSize = 0.5
     num_tilings = 10
     num_tiles = 3
     obs_space = env.observation_space
+    print(env.action_space.high)
+    print(env.action_space.low)
     m = env.action_space.n
     n = 30000
 
