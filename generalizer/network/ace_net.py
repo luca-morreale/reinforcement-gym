@@ -1,6 +1,4 @@
 from network import NetworkGeneralizer
-import numpy as np
-
 
 # Predict the q value
 
@@ -16,7 +14,7 @@ class ACE(NetworkGeneralizer):
 
     def get_internal_signal(self, inputs, reward):
         prediction = self.predict(inputs)
-        old_prediction = self.old_predict(inputs)
+        old_prediction = self.old_prediction(inputs)
 
         return reward + self._gamma * prediction - old_prediction
 
@@ -25,7 +23,7 @@ class ACE(NetworkGeneralizer):
         self._copy_current_net()
         return NetworkGeneralizer.train(self, inputs, prediction + delta)
 
-    def old_predict(self, inputs):
+    def old_prediction(self, inputs):
         return self._session.run(self.prev_net_y, feed_dict={
             self.prev_net_x: inputs
         })

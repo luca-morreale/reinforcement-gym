@@ -1,8 +1,6 @@
-
 from network import NetworkGeneralizer
 
 import tensorflow as tf
-import numpy as np
 
 # Predict action
 
@@ -12,7 +10,6 @@ class ASE(NetworkGeneralizer):
         NetworkGeneralizer.__init__(self, session, state_dim, learning_rate=learning_rate)
         self._action_dim = action_dim
         self._scaled_out = tf.mul(self.net_y, self._action_dim)
-
 
     def train(self, inputs, delta):
         prediction = NetworkGeneralizer.predict(self, inputs)

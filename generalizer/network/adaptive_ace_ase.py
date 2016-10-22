@@ -12,14 +12,14 @@ class ACEASE():
         self.critic = ACE(session, state_dim, gamma, learning_rate)
         self.actor = ASE(session, state_dim, action_dim, learning_rate)
         self._state_dim = state_dim
+        self._action_dim = action_dim
         self._session = session
         self._session.run(tf.initialize_all_variables())
 
-    def update_nets(self, state, reward):
-        for i in range(10):
-            delta = self.critic.get_internal_signal(np.reshape(state, self._state_shape()), reward)
-            self.actor.train(np.reshape(state, self._state_shape()), delta)
-            self.critic.train(np.reshape(state, self._state_shape()), delta)
+    def train(self, state, reward):
+        delta = self.critic.get_internal_signal(np.reshape(state, self._state_shape()), reward)
+        self.actor.train(np.reshape(state, self._state_shape()), delta)
+        self.critic.train(np.reshape(state, self._state_shape()), delta)
 
     def _state_shape(self):
         return tuple(reversed( (self._state_dim, ) + (1,) ))
