@@ -1,20 +1,21 @@
-import tensorflow as tf
-import numpy as np
 
-class NetworkGeneralizer():
-    ''' Class's internal variables
-    _session
-    _learning_rate
-    _hidden_units
-    net_x
-    net_y
-    target_out
-    _loss
-    _optimizer
+import tensorflow as tf
+
+class NeuralNetwork():
+    ''' Class's internal variables:
+        _session            tensorflow session
+        _learning_rate      learning rate of the network
+        _hidden_units       list of hidden uni
+        net_x               tf placeholder for input
+        net_y               tf placeholder for output
+        target_out          tf placeholder for target output
+        _loss               tf loss
+    _   optimizer           tf optimizer
     '''
 
-    def __init__(self, session, state_dim, hidden_units=[100, 200], learning_rate=0.1):
+    def __init__(self, session, state_dim, hidden_units=[100, 200], learning_rate=0.1, act_function=tf.nn.tanh):
         self._session = session
+        self.act_function = act_function
         self._learning_rate = learning_rate
 
         self._setup_layers(hidden_units, state_dim)
@@ -25,7 +26,6 @@ class NetworkGeneralizer():
 
     def _setup_layers(self, hidden_units, state_dim):
         hidden_units.insert(0, state_dim)
-        hidden_units.append(1)
         self._hidden_units = hidden_units
 
     def _create_net(self):
@@ -35,7 +35,7 @@ class NetworkGeneralizer():
         for i in range(1, len(self._hidden_units)):
             W = tf.Variable(tf.zeros([self._hidden_units[i - 1], self._hidden_units[i]]))
             b = tf.Variable(tf.zeros([self._hidden_units[i]]))
-            y = tf.nn.tanh(tf.matmul(y, W) + b)
+            y = self.act_function(tf.matmul(y, W) + b)
 
         return x, y
 

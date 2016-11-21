@@ -1,10 +1,11 @@
-from network import NetworkGeneralizer
+
+from regression_network import RegressionNetwork
 
 # Predict the q value
 
-class ACE(NetworkGeneralizer):
+class ACE(RegressionNetwork):
     def __init__(self, session, state_dim, gamma=0.8, learning_rate=0.1):
-        NetworkGeneralizer.__init__(self, session, state_dim, learning_rate=learning_rate)
+        RegressionNetwork.__init__(self, session, state_dim, learning_rate=learning_rate)
         self._gamma = gamma
         self._copy_current_net()
 
@@ -21,7 +22,7 @@ class ACE(NetworkGeneralizer):
     def train(self, inputs, delta):
         prediction = self.predict(inputs)
         self._copy_current_net()
-        return NetworkGeneralizer.train(self, inputs, prediction + delta)
+        return RegressionNetwork.train(self, inputs, prediction + delta)
 
     def old_prediction(self, inputs):
         return self._session.run(self.prev_net_y, feed_dict={

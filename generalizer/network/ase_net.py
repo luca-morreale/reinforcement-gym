@@ -1,21 +1,16 @@
-from network import NetworkGeneralizer
+
+from regression_network import RegressionNetwork
 
 import tensorflow as tf
 
 # Predict action
 
-class ASE(NetworkGeneralizer):
+class ASE(RegressionNetwork):
 
     def __init__(self, session, state_dim, action_dim, learning_rate=0.1):
-        NetworkGeneralizer.__init__(self, session, state_dim, learning_rate=learning_rate)
+        RegressionNetwork.__init__(self, session, state_dim, learning_rate=learning_rate)
         self._action_dim = action_dim
-        self._scaled_out = tf.mul(self.net_y, self._action_dim)
 
     def train(self, inputs, delta):
-        prediction = NetworkGeneralizer.predict(self, inputs)
-        return NetworkGeneralizer.train(self, inputs, delta + prediction)
-
-    def predict(self, inputs):
-        return self._session.run(self._scaled_out, feed_dict={
-            self.net_x: inputs
-        })
+        prediction = RegressionNetwork.predict(self, inputs)
+        return RegressionNetwork.train(self, inputs, delta + prediction)
