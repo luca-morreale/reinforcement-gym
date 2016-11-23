@@ -13,7 +13,7 @@ class BufferedACEASE(ACEASE):
 
     def train(self, state, action, reward, terminal, next_state):
 
-        self.buffer.add_sample(np.reshape(state, self._state_shape()), action, reward, terminal,
+        self.buffer.add_sample(np.reshape(state, self._state_shape()), action, np.array([reward]), terminal,
                                     np.reshape(next_state, self._state_shape()))
 
         if self.buffer.size() > self.MINI_BATCH_SIZE:
@@ -22,10 +22,10 @@ class BufferedACEASE(ACEASE):
             deltas = []
             for k in xrange(self.MINI_BATCH_SIZE):
                     if terminal_batch[k]:
-                        deltas.append(reward_batch[k])
+                        deltas.append(reward_batch[k][0])
                     else:
-                        deltas.append(self.critic.get_internal_signal(state_batch[k], reward_batch[k]))
+                        deltas.append(self.critic.get_internal_signal(state_batch[k], reward_batch[k])[0])
 
-            for k in xrange(self.MINI_BATCH_SIZE):
-                self.actor.train(state_batch[k], deltas[k])
-                self.critic.train(state_batch[k], deltas[k])
+            # batch update
+            self.actor.train(state_batch[k], np.array(deltas))
+            self.critic.train(state_batch[k], np.array(reward_batch))
