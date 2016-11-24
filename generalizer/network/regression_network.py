@@ -7,10 +7,10 @@ from network import NeuralNetwork
 class RegressionNetwork(NeuralNetwork):
     def __init__(self, session, state_dim, hidden_units=[100, 200], learning_rate=0.1, act_function=tf.nn.tanh):
         NeuralNetwork.__init__(self, session, state_dim, hidden_units, learning_rate, act_function)
-        self._addLinearOut()
+        self._add_linear_out()
         self._define_loss()
 
-    def _addLinearOut(self):
+    def _add_linear_out(self):
         W = tf.Variable(tf.zeros([self._hidden_units[-1], 1]))
         b = tf.Variable(tf.zeros([1]))
         self.net_y = tf.matmul(self.net_y, W) + b

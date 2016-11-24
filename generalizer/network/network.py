@@ -1,6 +1,7 @@
 
 import tensorflow as tf
 
+
 class NeuralNetwork():
     ''' Class's internal variables:
         _session            tensorflow session
