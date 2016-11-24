@@ -6,8 +6,8 @@ import numpy as np
 
 class BufferedACEASE(ACEASE):
 
-    def __init__(self, session, state_dim, action_dim, gamma=0.8, learning_rate=0.1, bufferSize=1024):
-        ACEASE.__init__(self, session, state_dim, action_dim, gamma, learning_rate)
+    def __init__(self, session, state_dim, gamma=0.8, learning_rate=0.1, bufferSize=1024):
+        ACEASE.__init__(self, session, state_dim, gamma, learning_rate)
         self.buffer = ReplayBuffer(bufferSize)
         self.MINI_BATCH_SIZE = 128
 
@@ -26,6 +26,7 @@ class BufferedACEASE(ACEASE):
                     else:
                         deltas.append(self.critic.get_internal_signal(state_batch[k], reward_batch[k])[0])
 
+            state_batch = self.transform_into_batch(state_batch, self.MINI_BATCH_SIZE)
+
             # batch update
-            self.actor.train(state_batch[k], np.array(deltas))
-            self.critic.train(state_batch[k], np.array(reward_batch))
+            self._train_networks(state_batch, actor_target_out=np.array(deltas), critic_target_out=np.array(reward_batch))
