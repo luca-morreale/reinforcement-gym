@@ -20,7 +20,7 @@ class NeuralNetwork():
         self._learning_rate = learning_rate
 
         self._setup_layers(hidden_units, state_dim)
-        self.net_x, self.net_y = self._create_net()
+        self.net_x, self.net_y, self.weights = self._create_net()
         self.target_out = tf.placeholder(tf.float32, [None, 1])
 
         self._define_loss()
@@ -30,15 +30,16 @@ class NeuralNetwork():
         self._hidden_units = hidden_units
 
     def _create_net(self):
-        x = tf.placeholder(tf.float32, [None, self._hidden_units[0]])
-        y = x
+        weights = []
+        y = x = tf.placeholder(tf.float32, [None, self._hidden_units[0]])
 
         for i in range(1, len(self._hidden_units)):
             W = tf.Variable(tf.zeros([self._hidden_units[i - 1], self._hidden_units[i]]))
             b = tf.Variable(tf.zeros([self._hidden_units[i]]))
             y = self.act_function(tf.matmul(y, W) + b)
+            weights.append(W)
 
-        return x, y
+        return x, y, weights
 
     def _define_loss(self):
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.net_y, self.target_out))
