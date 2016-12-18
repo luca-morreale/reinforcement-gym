@@ -23,9 +23,8 @@ class TracedACEASE(ACEASE):
         self.trace[1] *= self._lambda
         self.trace[1] = np.append(self.trace[1], np.array([1]), axis=0)
 
-    def train(self, state, reward, terminal):
-        experience = (np.reshape(state, self._state_shape()), np.array([reward]), terminal) # tuple state - reward
-
+    def train(self, state, action, reward, done, next_state):
+        experience = (self.critic.reshape_state(state), np.array([reward]), done) # tuple state - reward
         self._update_trace(experience)
         self.cleanup_trace()
 
@@ -37,7 +36,6 @@ class TracedACEASE(ACEASE):
                 deltas.append(reward[k][0])
             else:
                 deltas.append(self.critic.get_internal_signal(states[k], rewards[k])[0])
-
         actor_target, critic_target, states = self.prepare_batches(deltas, rewards, states, trace)
 
         # batch update

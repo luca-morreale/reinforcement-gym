@@ -14,8 +14,8 @@ class ACEASE():
         self._session.run(tf.initialize_all_variables())
 
     def train(self, state, reward):
-        delta = self.critic.get_internal_signal(np.reshape(state, self._state_shape()), reward)
-        state = np.reshape(state, self._state_shape())
+        state = self.critic.reshape_state(state)
+        delta = self.critic.get_internal_signal(state, reward)
         self._train_networks(state, actor_target_out=delta, critic_target_out=reward)
 
     def _train_networks(self, state, actor_target_out, critic_target_out):
@@ -23,7 +23,7 @@ class ACEASE():
         self.critic.train(state, critic_target_out)
 
     def get_action(self, state):
-        return self.actor.predict(np.reshape(state, self._state_shape()))
+        return self.actor.predict(self.actor.reshape_state(state))
 
     def transform_into_batch(self, state_batch, length):
         state_shape = list(self._state_shape())

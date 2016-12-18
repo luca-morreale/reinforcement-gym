@@ -13,8 +13,8 @@ class BufferedACEASE(ACEASE):
 
     def train(self, state, action, reward, terminal, next_state):
 
-        self.buffer.add_sample(np.reshape(state, self._state_shape()), action, np.array([reward]), terminal,
-                                    np.reshape(next_state, self._state_shape()))
+        self.buffer.add_sample(self.critic.reshape_state(state), action, np.array([reward]), terminal,
+                                    self.critic.reshape_state(next_state))
 
         if self.buffer.size() > self.MINI_BATCH_SIZE:
             state_batch, action_batch, reward_batch, terminal_batch, next_state_batch = self.buffer.get_batch(self.MINI_BATCH_SIZE)
