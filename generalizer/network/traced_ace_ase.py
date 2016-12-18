@@ -51,10 +51,6 @@ class TracedACEASE(ACEASE):
     def prepare_batches(self, deltas, rewards, states, trace):
         actor_target = np.transpose(np.multiply(np.transpose(deltas), trace))
         critic_target = np.transpose(np.multiply(np.transpose(rewards), trace))
-        states = self.transform_into_batch(states, len(trace))
+        critic_target = self.reshape_into_batch(critic_target, len(trace), (len(trace), 1))
+        states = self.reshape_state_batch(states, len(trace))
         return actor_target, critic_target, states
-
-    def transform_into_batch(self, state_batch, length):
-        state_shape = list(self._state_shape())
-        state_shape[0] = length
-        return np.reshape(state_batch, tuple(state_shape))

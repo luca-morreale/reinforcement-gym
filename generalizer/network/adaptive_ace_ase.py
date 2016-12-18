@@ -25,7 +25,11 @@ class ACEASE():
     def get_action(self, state):
         return self.actor.predict(self.actor.reshape_state(state))
 
-    def transform_into_batch(self, state_batch, length):
-        state_shape = list(self._state_shape())
-        state_shape[0] = length
-        return np.reshape(state_batch, tuple(state_shape))
+    def reshape_state_batch(self, state_batch, length):
+        return self.reshape_into_batch(state_batch, length, self.critic.state_shape())
+
+    def reshape_into_batch(self, batch, length, shape):
+        list_shape = list(shape)
+        list_shape[0] = length
+        return np.reshape(batch, tuple(list_shape))
+

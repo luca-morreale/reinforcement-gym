@@ -26,7 +26,8 @@ class BufferedACEASE(ACEASE):
                     else:
                         deltas.append(self.critic.get_internal_signal(state_batch[k], reward_batch[k])[0])
 
-            state_batch = self.transform_into_batch(state_batch, self.MINI_BATCH_SIZE)
+            state_batch = self.reshape_state_batch(state_batch, self.MINI_BATCH_SIZE)
+            reward_batch = self.reshape_into_batch(np.array(reward_batch), self.MINI_BATCH_SIZE, (self.MINI_BATCH_SIZE,1))
 
             # batch update
-            self._train_networks(state_batch, actor_target_out=np.array(deltas), critic_target_out=np.array(reward_batch))
+            self._train_networks(state_batch, actor_target_out=np.array(deltas), critic_target_out=reward_batch)
