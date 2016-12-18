@@ -11,8 +11,6 @@ class ACEASE():
     def __init__(self, session, state_dim, gamma=0.8, learning_rate=0.1):
         self.critic = ACE(session, state_dim, gamma, learning_rate)
         self.actor = ASE(session, state_dim, learning_rate)
-        self._state_dim = state_dim
-        self._session = session
         self._session.run(tf.initialize_all_variables())
 
     def train(self, state, reward):
