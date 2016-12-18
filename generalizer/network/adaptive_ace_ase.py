@@ -24,9 +24,6 @@ class ACEASE():
         self.actor.train(state, actor_target_out)
         self.critic.train(state, critic_target_out)
 
-    def _state_shape(self):
-        return tuple(reversed( (self._state_dim, ) + (1,) ))
-
     def get_action(self, state):
         return self.actor.predict(np.reshape(state, self._state_shape()))
 

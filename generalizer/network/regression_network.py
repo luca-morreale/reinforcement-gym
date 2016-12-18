@@ -1,5 +1,6 @@
 
 import tensorflow as tf
+import numpy as np
 
 from network import NeuralNetwork
 
@@ -19,3 +20,9 @@ class RegressionNetwork(NeuralNetwork):
     def _define_loss(self):
         self._loss = tf.reduce_mean(tf.pow(tf.sub(self.net_y, self.target_out), 2.0))
         self._optimizer = tf.train.GradientDescentOptimizer(self._learning_rate).minimize(self._loss)
+
+    def state_shape(self):
+        return tuple(reversed( (self._state_dim, ) + (1,) ))
+
+    def reshape_state(self, state):
+        return np.reshape(state, self.state_shape())
