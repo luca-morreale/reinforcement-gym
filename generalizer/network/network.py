@@ -16,6 +16,7 @@ class NeuralNetwork():
 
     def __init__(self, session, state_dim, hidden_units=[100, 200], learning_rate=0.1, act_function=tf.nn.tanh):
         self._session = session
+        self._state_dim = state_dim
         self.act_function = act_function
         self._learning_rate = learning_rate
 
